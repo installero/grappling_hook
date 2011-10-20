@@ -29,11 +29,7 @@
 					<xsl:apply-templates select="&structure;/blocks/content/module" mode="l-content"/>
 				</div>
 				<div class="l-sidebar">
-          <ul class="l-sidebar-add">
-            <li class="l-sidebar-add-item"><a href="{&prefix;}book/new">Добавить книгу</a></li>
-          	<li class="l-sidebar-add-item"><a href="{&prefix;}author/new">Добавить автора</a></li>
-          	<li class="l-sidebar-add-item"><a href="{&prefix;}series/new">Добавить серию</a></li>
-          </ul>
+          
 					<xsl:apply-templates select="&structure;/blocks/sidebar/module" mode="l-sidebar"/>
 				</div>
 			</div>
@@ -61,9 +57,6 @@
     <div class="l-header-module">
       <xsl:apply-templates select="&structure;/blocks/header/module" mode="l-header-module"/>
     </div>
-		<div class="l-header-search">
-			<xsl:apply-templates select="&root;" mode="l-header-search" />
-		</div>
 		<div class="l-header-nav">
 			<xsl:apply-templates select="&root;" mode="l-header-nav" />
 		</div>
@@ -104,48 +97,16 @@
 
 	<xsl:template match="*" mode="l-header-nav">
 		<ul>
-			<p>
-				<a href="{&prefix;}books">Книги</a>
-			</p>
 			<li>
-				<a href="{&prefix;}new">Новые</a>
-			</li>
-			<li>
-				<a href="{&prefix;}popular">Популярные</a>
-			</li>
-			<li>
-				<a href="{&prefix;}authors">Авторы</a>
-			</li>
-			<li>
-				<a href="{&prefix;}genres">Жанры</a>
-			</li>
-			<li>
-				<a href="{&prefix;}series">Серии</a>
+				<a href="{&prefix;}features">Список тестов</a>
 			</li>
 		</ul>
 		<ul>
 			<p>
-				<a href="{&prefix;}">Клуб</a>
-			</p>
-			<li>
-				<a href="{&prefix;}forum">Форум</a>
-			</li>
-			<li><a href="{&prefix;}tracker">Активность</a></li>
-			<!--<li>-->
-				<!--<a href="{&prefix;}">Вычитка</a>-->
-			<!--</li>-->
+				<a href="{&prefix;}features">Тесты</a>
+			</p>	
 		</ul>
-		<!--<ul>-->
-			<!--<p>-->
-				<!--<a href="{&prefix;}">Абонемент</a>-->
-			<!--</p>-->
-			<!--<li>-->
-				<!--<a href="{&prefix;}">Оплатить</a>-->
-			<!--</li>-->
-			<!--<li>-->
-				<!--<a href="{&prefix;}">Заработать</a>-->
-			<!--</li>-->
-		<!--</ul>-->
+		
 	</xsl:template>
 
 	<xsl:template match="*" mode="l-footer-nav">

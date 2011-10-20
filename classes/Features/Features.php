@@ -14,4 +14,12 @@ class Features extends Collection {
 		return self::$features_instance;
 	}
 
+	public function create($data) {
+		$q = array();
+		foreach ($data as $field => $value) {
+			$q[] = $field . '=' . Database::escape($value);
+		}
+		return Database::query('INSERT INTO `features` SET ' . implode(',', $q));
+	}
+
 }

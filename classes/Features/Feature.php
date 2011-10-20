@@ -41,34 +41,33 @@ class Feature extends BaseObjectClass {
 		);
 		return $out;
 	}
-	
-	
-	function getTitle(){
+
+	function getTitle() {
 		$this->load();
 		return $this->data['title'];
 	}
-	
-	function getStatus(){
+
+	function getStatus() {
 		$this->load();
 		return $this->data['status'];
 	}
-	
-	function getGroupId(){
+
+	function getGroupId() {
 		$this->load();
 		return $this->data['group_id'];
 	}
-	
-	function getPath(){
+
+	function getPath() {
 		$this->load();
 		return $this->data['path'];
 	}
-	
-	function getLastRun(){
+
+	function getLastRun() {
 		$this->load();
 		return $this->data['last_run'];
 	}
-	
-	function getLastMessage(){
+
+	function getLastMessage() {
 		$this->load();
 		return $this->data['last_message'];
 	}
