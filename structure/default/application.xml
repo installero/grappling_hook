@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<structure>
+	<data>
+		<stylesheet path="reset"/>
+		<stylesheet path="layout"/>
+		<stylesheet path="module"/>
+		<stylesheet path="partials/user"/>
+		<javascript path="jquery.min" />
+		<javascript path="application" />
+		<role need="50"/>
+	</data>
+	<blocks>
+		<header><module name="users" action="show" mode="auth"/></header>
+	</blocks>
+</structure>

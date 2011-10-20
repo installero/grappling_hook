@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<structure>
+	<data>
+		<layout file="layouts/page.xsl"/>
+		<stylesheet path="partials/book"/>
+		<stylesheet path="partials/author"/>
+		<stylesheet path="partials/event"/>
+		<stylesheet path="partials/genre"/>
+		<title>GRAPPLING HOOK</title>
+	</data>
+	<blocks>
+		<content>
+			
+		</content>
+		<sidebar>
+			
+		</sidebar>
+	</blocks>
+</structure>
