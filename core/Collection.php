@@ -7,6 +7,7 @@ class Collection {
 	public $itemName = 'some_object';
 	public $itemsName = 'some_objects';
 	public static $books_instance = false;
+	public static $features_instance = false;
 	public static $persons_instance = false;
 	public $items = array();
 	public $from_cache = array();

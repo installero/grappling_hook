@@ -2,9 +2,9 @@
 
 class Map {
 
-	public static $map =
-		array(
+	public static $map = array(
 	    '/' => 'main.xml',
+	    'features' => 'features/list.xml',
 	    'register' => 'register/index.xml',
 	    'emailconfirm/%d/%s' => 'misc/email_confirm.xml',
 	    404 => 'errors/p404.xml',
@@ -12,8 +12,7 @@ class Map {
 	    'user/%s' => 'users/user.xml',
 	    'user/%s/edit' => 'users/edit.xml',
 	);
-	public static $sinonim =
-		array(
+	public static $sinonim = array(
 	    'user/%d' => 'user/%s',
 	    'user/%d/edit' => 'user/%s/edit',
 	);
