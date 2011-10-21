@@ -28,32 +28,14 @@
 				<div class="l-content">
 					<xsl:apply-templates select="&structure;/blocks/content/module" mode="l-content"/>
 				</div>
-				<div class="l-sidebar">
-          
-					<xsl:apply-templates select="&structure;/blocks/sidebar/module" mode="l-sidebar"/>
-				</div>
 			</div>
 			<div class="l-footer">
-				<xsl:apply-templates select="&root;" mode="l-footer" />
 				<xsl:call-template name="l-debug"></xsl:call-template>
 			</div>
 		</body>
 	</xsl:template>
 
 	<xsl:template match="*" mode="l-header">
-		<div class="l-header-logo">
-			<h1>
-        <a>
-          <xsl:if test="&prefix;!=&page;/@current_url">
-            <xsl:attribute name="href">
-              <xsl:value-of select="&prefix;">
-              </xsl:value-of>
-            </xsl:attribute>
-          </xsl:if>
-          Либрусек
-        </a>
-			</h1>
-		</div>
     <div class="l-header-module">
       <xsl:apply-templates select="&structure;/blocks/header/module" mode="l-header-module"/>
     </div>
@@ -63,10 +45,6 @@
 	</xsl:template>
 
 	<xsl:template match="*" mode="l-content">
-    <xsl:apply-templates select="." mode="modules"/>
-	</xsl:template>
-
-	<xsl:template match="*" mode="l-sidebar">
     <xsl:apply-templates select="." mode="modules"/>
 	</xsl:template>
 
@@ -82,12 +60,6 @@
       <xsl:apply-templates select="&root;/module[@name = current()/@name and @action=current()/@action and not(@mode)]" />
     </xsl:if>
   </xsl:template>
-
-	<xsl:template match="*" mode="l-footer">
-		<div class="l-footer-nav">
-			<xsl:apply-templates select="&root;" mode="l-footer-nav" />
-		</div>
-	</xsl:template>
 
 	<xsl:template match="*" mode="l-header-search">
     <form action="{&prefix;}search">

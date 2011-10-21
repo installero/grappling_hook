@@ -2,6 +2,7 @@
 <structure>
 	<data>
 		<title>Список тестов</title>
+    <stylesheet path="partials/feature"/>
 		<role need="50"/>
 	</data>
 	<blocks>
