@@ -22,6 +22,13 @@ class features_module extends CommonModule {
 						break;
 				}
 				break;
+			case 'edit':
+				switch ($mode) {
+					default:
+						$this->_show($this->params['feature_id']);
+						break;
+				}
+				break;
 			case 'new':
 				switch ($mode) {
 					default:
