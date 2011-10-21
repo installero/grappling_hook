@@ -126,7 +126,9 @@
 		</div>
 		<div>
 			<h3>последний результат тестирования</h3>
-			<xsl:value-of select="@last_message" disable-output-escaping="yes"/>
+			<pre>
+				<xsl:value-of select="@last_message" disable-output-escaping="yes"/>
+			</pre>
 		</div>
 	</xsl:template>
 

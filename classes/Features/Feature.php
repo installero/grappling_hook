@@ -38,6 +38,11 @@ class Feature extends BaseObjectClass {
 		$tableName = Features::getInstance()->tableName;
 		return parent::_create($data, $tableName);
 	}
+	
+	function _update($data) {
+		$tableName = Features::getInstance()->tableName;
+		return parent::_update($data, $tableName);
+	}
 
 	function setStatus($status_code, $message) {
 		$query = 'UPDATE `features` SET
