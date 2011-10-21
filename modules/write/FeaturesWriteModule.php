@@ -30,7 +30,7 @@ class FeaturesWriteModule extends BaseWriteModule {
 		$id = Request::post('id');
 		if ($id) {
 			$feature = Features::getInstance()->getByIdLoaded($id);
-			$description = $feature->_run();
+			list($success, $description) = $feature->_run();
 			$this->setWriteParameter('features_module', 'run_result', implode("\n", $description));
 		}
 	}

@@ -34,7 +34,7 @@
 
 	<xsl:template match="*" mode="p-feature-groups">
 		<xsl:if test="parent::module/write/@run_result">
-			<div>
+			<div style="width:100%;overflow:auto">
 				<pre>
 					<xsl:value-of select="parent::module/write/@run_result" disable-output-escaping="yes" />	
 				</pre>
@@ -129,11 +129,11 @@
 		</tr>
 		<div>
 			<h3>описание теста</h3>
-			<xsl:value-of select="@description" />
+			<xsl:value-of select="@description" disable-output-escaping="yes"/>
 		</div>
 		<div>
 			<h3>последний результат тестирования</h3>
-			<xsl:value-of select="@last_message" />
+			<xsl:value-of select="@last_message" disable-output-escaping="yes"/>
 		</div>
 	</xsl:template>
 

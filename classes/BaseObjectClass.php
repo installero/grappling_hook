@@ -11,6 +11,7 @@ class BaseObjectClass {
 
 	function _create($data, $tableName) {
 		$q = array();
+		$this->dropCache();
 		foreach ($data as $field => $value) {
 			if (isset($this->fieldsMap[$field])) {
 				$q[] = '`' . $field . '`=' . Database::escape($value);

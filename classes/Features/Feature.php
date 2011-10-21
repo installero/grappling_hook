@@ -1,7 +1,11 @@
 <?php
 
 class Feature extends BaseObjectClass {
-
+	const STATUS_OK = 1;
+	const STATUS_FAILED = 2;
+	const STATUS_NO_FILE = 3;
+	const STATUS_NEW = 0;
+	//
 	public $id;
 	public $loaded = false;
 	public $data;
@@ -26,19 +30,54 @@ class Feature extends BaseObjectClass {
 		}
 	}
 
+	function dropCache() {
+		Features::getInstance()->dropCache($this->id);
+	}
+
 	function _create($data) {
 		$tableName = Features::getInstance()->tableName;
 		return parent::_create($data, $tableName);
 	}
 
+	function setStatus($status_code, $message) {
+		$query = 'UPDATE `features` SET
+			`status`=' . (int) $status_code . ',
+			`last_run`=' . time() . ',
+			`last_message`=' . Database::escape($message) . '
+				WHERE
+			`id`=' . $this->id;
+		Database::query($query);
+	}
+
 	function _run() {
 		$this->load();
 
-		$command = '/usr/local/bin/behat -f progress -c '.Config::need('features_path').'behat.yml ' . Config::need('features_path') . $this->getFilePath();
+		$command = '/usr/local/bin/behat -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
 		exec($command, $output, $return_var);
-		if($return_var !== 1)
-			throw new Exception ('test failed');
-		return $output;
+		if ($return_var !== 0)
+			throw new Exception('test failed(' . $return_var . ')' . implode("\n", $output));
+		$recording = false;
+		$error_message = '';
+		$success = true;
+		foreach ($output as $line) {
+			if ($recording)
+				$error_message.=$line . "\n";
+			if (strstr($line, '(::) failed steps (::)')) {
+				$recording = true;
+				$success = false;
+			}
+			if (strstr($line, 'scenario')) {
+				$recording = false;
+			}
+		}
+
+		if (!$success) {
+			$this->setStatus(self::STATUS_FAILED, $error_message);
+		} else {
+			$this->setStatus(self::STATUS_OK, implode("\n", $output));
+		}
+		$this->dropCache();
+		return array($success, $output);
 	}
 
 	function load($data = false) {
@@ -68,9 +107,10 @@ class Feature extends BaseObjectClass {
 		    'title' => $this->getTitle(),
 		    'description' => $this->getDescription(),
 		    'status' => $this->getStatus(),
+		    'status_description' => $this->getStatusDescription(),
 		    'group_id' => $this->getGroupId(),
 		    'filepath' => $this->getFilePath(),
-		    'last_run' => $this->getLastRun(),
+		    'last_run' => ($last_run = $this->getLastRun()) ? date('Y/m/d H:i', $last_run) : 0,
 		    'last_message' => $this->getLastMessage(),
 		    'path' => $this->getUrl(),
 		);
@@ -90,6 +130,26 @@ class Feature extends BaseObjectClass {
 	function getStatus() {
 		$this->load();
 		return $this->data['status'];
+	}
+
+	function getStatusDescription() {
+		$this->load();
+		$status = $this->data['status'];
+		switch ($status) {
+			case self::STATUS_NEW:
+				return 'new';
+				break;
+			case self::STATUS_OK:
+				return 'ok';
+				break;
+			case self::STATUS_FAILED:
+				return 'failed';
+				break;
+			case self::STATUS_NO_FILE:
+				return 'no_file';
+				break;
+		}
+		return 'unknown';
 	}
 
 	function getGroupId() {
