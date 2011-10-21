@@ -46,16 +46,12 @@
 					заголовок
 				</td>
 				<td>
-					статус
-				</td>
-				<td>
 					файл теста
 				</td>
 				<td>
 					последний запуск
 				</td>
 				<td>
-					
 				</td>
 			</tr>
 			<xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
@@ -84,14 +80,11 @@
 	</xsl:template>
 
 	<xsl:template match="*" mode="p-feature-list-item">
-		<tr>
-			<td>
+    <tr class="p-feature-list {@status_description}">
+			<td class="p-feature-list-title">
 				<a href="{@path}">
 					<xsl:value-of select="@title" />
 				</a>
-			</td>
-			<td>
-				<xsl:value-of select="@status" />
 			</td>
 			<td>
 				<xsl:value-of select="@filepath" />

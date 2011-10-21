@@ -94,8 +94,6 @@
         <xsl:when test="profile/@authorized = '1'">
           <div class="p-user-auth-image"><xsl:apply-templates select="profile" mode="helpers-user-image"/></div>
           <xsl:apply-templates select="profile" mode="helpers-user-link"/> | 
-          <a href="{&prefix;}me/messages">Сообщения<xsl:if test="profile/@new_messages!=0">&nbsp;<b>(<xsl:value-of select="profile/@new_messages"></xsl:value-of>)</b></xsl:if></a> |
-          <a href="{&prefix;}me/wall">Стена</a> |
           <a href="{&prefix;}logout">Выход</a>	
         </xsl:when>	
         <xsl:otherwise>
