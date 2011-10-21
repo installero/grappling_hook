@@ -20,7 +20,7 @@
 				</div>
 				<div class="form-field">
 					<label>Путь до файла (относительно папки features/)</label>
-					<input name="path"/>
+					<input name="filepath"/>
 				</div>
 			</div>
 			<div class="form-control">
@@ -33,6 +33,13 @@
 	</xsl:template>
 
 	<xsl:template match="*" mode="p-feature-groups">
+		<xsl:if test="parent::module/write/@run_result">
+			<div>
+				<pre>
+					<xsl:value-of select="parent::module/write/@run_result" disable-output-escaping="yes" />	
+				</pre>
+			</div>
+		</xsl:if>
 		<table width="100%">
 			<tr>
 				<td>
@@ -47,6 +54,9 @@
 				<td>
 					последний запуск
 				</td>
+				<td>
+					
+				</td>
 			</tr>
 			<xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
 		</table>
@@ -54,10 +64,12 @@
 	
 	<xsl:template match="*" mode="p-feature-group-list-item">
 		<tr>
-				<td colspan="4">
-					<h2><xsl:value-of select="@title" /></h2>
-				</td>
-			</tr>
+			<td colspan="4">
+				<h2>
+					<xsl:value-of select="@title" />
+				</h2>
+			</td>
+		</tr>
 		<xsl:apply-templates select="features" mode="p-feature-list" />		
 	</xsl:template>
 
@@ -87,8 +99,15 @@
 			<td>
 				<xsl:value-of select="@last_run" />
 			</td>
+			<td>
+				<form method="post">
+					<input type="hidden" value="FeaturesWriteModule" name="writemodule" />
+					<input type="hidden" value="run" name="action" />
+					<input type="hidden" value="{@id}" name="id" />
+					<input type="submit" value="run" />
+				</form>
+			</td>
 		</tr>
-
 	</xsl:template>
 
 	<xsl:template match="*" mode="p-feature-item">

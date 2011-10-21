@@ -31,6 +31,16 @@ class Feature extends BaseObjectClass {
 		return parent::_create($data, $tableName);
 	}
 
+	function _run() {
+		$this->load();
+
+		$command = '/usr/local/bin/behat -f progress -c '.Config::need('features_path').'behat.yml ' . Config::need('features_path') . $this->getFilePath();
+		exec($command, $output, $return_var);
+		if($return_var !== 1)
+			throw new Exception ('test failed');
+		return $output;
+	}
+
 	function load($data = false) {
 		if ($this->loaded)
 			return false;
@@ -42,11 +52,11 @@ class Feature extends BaseObjectClass {
 		$this->exists = true;
 		$this->loaded = true;
 	}
-	
+
 	function _show() {
 		return $this->getListData();
 	}
-	
+
 	function getUrl($redirect = false) {
 		$id = $redirect ? $this->getDuplicateId() : $this->id;
 		return Config::need('www_path') . '/features/' . $id;
@@ -71,7 +81,7 @@ class Feature extends BaseObjectClass {
 		$this->load();
 		return $this->data['title'];
 	}
-	
+
 	function getDescription() {
 		$this->load();
 		return $this->data['description'];
