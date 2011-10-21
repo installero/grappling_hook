@@ -32,6 +32,7 @@ class Feature extends BaseObjectClass {
 
 	function dropCache() {
 		Features::getInstance()->dropCache($this->id);
+		$this->loaded = false;
 	}
 
 	function _create($data) {
@@ -61,8 +62,7 @@ class Feature extends BaseObjectClass {
 
 		$command = '/usr/local/bin/behat -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
 		exec($command, $output, $return_var);
-		if ($return_var > 1)
-			throw new Exception('test failed(' . $return_var . ')' . implode("\n", $output));
+
 		$recording = false;
 		$error_message = '';
 		$code = self::STATUS_OK;
@@ -89,7 +89,7 @@ class Feature extends BaseObjectClass {
 			$this->setStatus($code, implode("\n", $output));
 		}
 		$this->dropCache();
-		return array($success, $output);
+		return array($code == self::STATUS_OK, $output);
 	}
 
 	function load($data = false) {

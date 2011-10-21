@@ -59,11 +59,13 @@ class features_module extends CommonModule {
 		}
 		$query = 'SELECT * FROM `feature_groups` WHERE `id` IN(' . implode(',', $groups) . ')';
 		$groups = Database::sql2array($query, 'id');
-		$groups[0] = array('title' => 'без группы');
+
 
 		foreach ($data['features'] as $feature) {
 			$groups[$feature['group_id']]['features'][] = $feature;
 		}
+		if (isset($groups[0]))
+			$groups[0] = array('title' => 'без группы');
 
 		return $groups;
 	}
