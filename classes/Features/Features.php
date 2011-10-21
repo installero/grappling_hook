@@ -14,12 +14,11 @@ class Features extends Collection {
 		return self::$features_instance;
 	}
 
-	public function create($data) {
-		$q = array();
-		foreach ($data as $field => $value) {
-			$q[] = $field . '=' . Database::escape($value);
-		}
-		return Database::query('INSERT INTO `features` SET ' . implode(',', $q));
+	public function _create($data) {
+		$item = new $this->className(0);
+		$createdId = $item->_create($data);
+		header('Location:' . Config::need('www_path') . '/features/' . $createdId);
+		exit();
 	}
 
 }

@@ -232,7 +232,6 @@ class User {
 					foreach ($this->profile as $field => $value) {
 						$this->setXMLAttibute($field, $value);
 					}
-					$this->profileAdditional = $cachedUser->profileAdditional;
 					$this->loaded = true;
 					return;
 				} else {

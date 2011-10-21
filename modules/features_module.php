@@ -15,6 +15,20 @@ class features_module extends CommonModule {
 						break;
 				}
 				break;
+			case 'show':
+				switch ($mode) {
+					default:
+						$this->_show($this->params['feature_id']);
+						break;
+				}
+				break;
+			case 'new':
+				switch ($mode) {
+					default:
+						$this->_new();
+						break;
+				}
+				break;
 			default:
 				throw new Exception('no action #' . $this->action . ' for ' . $this->moduleName);
 				break;

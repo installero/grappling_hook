@@ -7,6 +7,7 @@
 		<stylesheet path="partials/event"/>
 		<stylesheet path="partials/genre"/>
 		<title>GRAPPLING HOOK</title>
+		<role need="0"/>
 	</data>
 	<blocks>
 		<content>

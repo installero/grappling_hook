@@ -5,6 +5,15 @@ class Feature extends BaseObjectClass {
 	public $id;
 	public $loaded = false;
 	public $data;
+	public $fieldsMap = array(
+	    'group_id' => 'int',
+	    'title' => 'string',
+	    'description' => 'html',
+	    'filepath' => 'string',
+	    'last_run' => 'int',
+	    'status' => 'int',
+	    'last_message' => 'html'
+	);
 
 	function __construct($id, $data = false) {
 		$this->id = $id;
@@ -15,6 +24,11 @@ class Feature extends BaseObjectClass {
 			}
 			$this->load($data);
 		}
+	}
+
+	function _create($data) {
+		$tableName = Features::getInstance()->tableName;
+		return parent::_create($data, $tableName);
 	}
 
 	function load($data = false) {
@@ -28,16 +42,27 @@ class Feature extends BaseObjectClass {
 		$this->exists = true;
 		$this->loaded = true;
 	}
+	
+	function _show() {
+		return $this->getListData();
+	}
+	
+	function getUrl($redirect = false) {
+		$id = $redirect ? $this->getDuplicateId() : $this->id;
+		return Config::need('www_path') . '/features/' . $id;
+	}
 
 	function getListData() {
 		$out = array(
 		    'id' => $this->id,
 		    'title' => $this->getTitle(),
+		    'description' => $this->getDescription(),
 		    'status' => $this->getStatus(),
 		    'group_id' => $this->getGroupId(),
-		    'path' => $this->getPath(),
+		    'filepath' => $this->getFilePath(),
 		    'last_run' => $this->getLastRun(),
 		    'last_message' => $this->getLastMessage(),
+		    'path' => $this->getUrl(),
 		);
 		return $out;
 	}
@@ -45,6 +70,11 @@ class Feature extends BaseObjectClass {
 	function getTitle() {
 		$this->load();
 		return $this->data['title'];
+	}
+	
+	function getDescription() {
+		$this->load();
+		return $this->data['description'];
 	}
 
 	function getStatus() {
@@ -57,9 +87,9 @@ class Feature extends BaseObjectClass {
 		return $this->data['group_id'];
 	}
 
-	function getPath() {
+	function getFilePath() {
 		$this->load();
-		return $this->data['path'];
+		return $this->data['filepath'];
 	}
 
 	function getLastRun() {
