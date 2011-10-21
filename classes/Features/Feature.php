@@ -36,11 +36,13 @@ class Feature extends BaseObjectClass {
 
 	function _create($data) {
 		$tableName = Features::getInstance()->tableName;
+		$this->dropCache();
 		return parent::_create($data, $tableName);
 	}
-	
+
 	function _update($data) {
 		$tableName = Features::getInstance()->tableName;
+		$this->dropCache();
 		return parent::_update($data, $tableName);
 	}
 
@@ -59,27 +61,32 @@ class Feature extends BaseObjectClass {
 
 		$command = '/usr/local/bin/behat -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
 		exec($command, $output, $return_var);
-		if ($return_var !== 0)
+		if ($return_var > 1)
 			throw new Exception('test failed(' . $return_var . ')' . implode("\n", $output));
 		$recording = false;
 		$error_message = '';
-		$success = true;
+		$code = self::STATUS_OK;
 		foreach ($output as $line) {
 			if ($recording)
 				$error_message.=$line . "\n";
 			if (strstr($line, '(::) failed steps (::)')) {
 				$recording = true;
-				$success = false;
+				$code = self::STATUS_FAILED;
 			}
+			if (strstr($line, 'No steps')) {
+				$code = self::STATUS_NO_FILE;
+				$recording = true;
+			}
+
 			if (strstr($line, 'scenario')) {
 				$recording = false;
 			}
 		}
 
-		if (!$success) {
-			$this->setStatus(self::STATUS_FAILED, $error_message);
+		if ($code != self::STATUS_OK) {
+			$this->setStatus($code, $error_message);
 		} else {
-			$this->setStatus(self::STATUS_OK, implode("\n", $output));
+			$this->setStatus($code, implode("\n", $output));
 		}
 		$this->dropCache();
 		return array($success, $output);

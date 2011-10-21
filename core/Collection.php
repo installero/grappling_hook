@@ -52,6 +52,7 @@ class Collection {
 
 	public function dropCache($id) {
 		Cache::drop($this->itemName . '_' . $id);
+		unset($this->items[$id]);
 	}
 
 	public static function add($classExem) {
