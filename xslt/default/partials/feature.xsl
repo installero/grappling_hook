@@ -32,4 +32,92 @@
 		</script>
 	</xsl:template>
 
+	<xsl:template match="*" mode="p-feature-groups">
+		<table width="100%">
+			<tr>
+				<td>
+					заголовок
+				</td>
+				<td>
+					статус
+				</td>
+				<td>
+					файл теста
+				</td>
+				<td>
+					последний запуск
+				</td>
+			</tr>
+			<xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
+		</table>
+	</xsl:template>
+	
+	<xsl:template match="*" mode="p-feature-group-list-item">
+		<tr>
+				<td colspan="4">
+					<h2><xsl:value-of select="@title" /></h2>
+				</td>
+			</tr>
+		<xsl:apply-templates select="features" mode="p-feature-list" />		
+	</xsl:template>
+
+	<xsl:template match="*" mode="p-feature-show">
+		<ul>
+			<xsl:apply-templates select="." mode="p-feature-item" />
+		</ul>
+	</xsl:template>
+
+	<xsl:template match="*" mode="p-feature-list">
+		<xsl:apply-templates select="item" mode="p-feature-list-item" />
+	</xsl:template>
+
+	<xsl:template match="*" mode="p-feature-list-item">
+		<tr>
+			<td>
+				<a href="{@path}">
+					<xsl:value-of select="@title" />
+				</a>
+			</td>
+			<td>
+				<xsl:value-of select="@status" />
+			</td>
+			<td>
+				<xsl:value-of select="@filepath" />
+			</td>
+			<td>
+				<xsl:value-of select="@last_run" />
+			</td>
+		</tr>
+
+	</xsl:template>
+
+	<xsl:template match="*" mode="p-feature-item">
+		<tr>
+			<td>
+				<a href="{@path}">
+					<xsl:value-of select="@title" />
+				</a>
+			</td>
+			<td>
+				<xsl:value-of select="@status" />
+			</td>
+			<td>
+				<xsl:value-of select="@filepath" />
+			</td>
+			<td>
+				<xsl:value-of select="@last_run" />
+			</td>
+		</tr>
+		<div>
+			<h3>описание теста</h3>
+			<xsl:value-of select="@description" />
+		</div>
+		<div>
+			<h3>последний результат тестирования</h3>
+			<xsl:value-of select="@last_message" />
+		</div>
+	</xsl:template>
+
+
+
 </xsl:stylesheet>
