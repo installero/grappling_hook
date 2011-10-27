@@ -45,8 +45,12 @@ class features_module extends CommonModule {
 	function getFeaturesList() {
 		$where = '';
 		$data = $this->_list($where, false, 1);
-		$this->data['feature_groups'] = array();
-		$this->data['feature_groups'] = $this->getInGroup($data);
+		foreach ($data['features'] as &$item) {
+			$item['path_edit'] = 'features/' . $item['id'] . '/edit';
+			$item['path_delete'] = 'features/' . $item['id'] . '/delete';
+		}
+		$this->data['groups'] = array();
+		$this->data['groups'] = $this->getInGroup($data);
 
 		$this->data['features']['title'] = 'Тесты';
 		$this->data['features']['count'] = $this->getCountBySQL($where);
@@ -59,10 +63,11 @@ class features_module extends CommonModule {
 		}
 		$query = 'SELECT * FROM `feature_groups` WHERE `id` IN(' . implode(',', $groups) . ')';
 		$groups = Database::sql2array($query, 'id');
-
-
+		$i = 0;
 		foreach ($data['features'] as $feature) {
 			$groups[$feature['group_id']]['features'][] = $feature;
+			if ($feature['group_id'])
+				$groups[$feature['group_id']]['path_edit'] = 'groups/' . $feature['group_id'] . '/edit';
 		}
 		if (isset($groups[0]))
 			$groups[0] = array('title' => 'без группы');

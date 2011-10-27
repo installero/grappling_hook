@@ -25,7 +25,8 @@ class FeaturesWriteModule extends BaseWriteModule {
 		    'status' => 0,
 		    'last_message' => '',
 		);
-		Features::getInstance()->_create($data);
+		if ($data['title'])
+			Features::getInstance()->_create($data);
 	}
 
 	function _update() {
@@ -36,7 +37,8 @@ class FeaturesWriteModule extends BaseWriteModule {
 		    'filepath' => isset(Request::$post['filepath']) ? prepare_review(Request::$post['filepath'], '') : false,
 		    'group_id' => isset(Request::$post['group_id']) ? (int) Request::$post['group_id'] : false,
 		);
-		Features::getInstance()->_update($data);
+		if ($data['title'] && $data['id'])
+			Features::getInstance()->_update($data);
 	}
 
 	function _run() {
