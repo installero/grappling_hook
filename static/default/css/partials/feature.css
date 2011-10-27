@@ -1,0 +1,14 @@
+.p-feature-group {margin-bottom:2em}
+.p-feature-group-table {width:100%}
+.p-feature-group-table th {color:#aaa; font-weight:bold; padding-bottom:2px}
+.p-feature-group-title {width:20%}
+.p-feature-group-last_run {width:20%}
+.p-feature-group-control {width:10%}
+
+.p-feature-list-title {border-left-width:15px; border-left-style:solid; padding-left:10px}
+.p-feature-list td {vertical-align:middle; padding:5px 5px 5px 10px}
+
+.ok td {border-left-color:#2C6E07; background:#C3FAAF}
+.failed td {border-left-color:#EB3636; background:#FA8E8E}
+.no_file td {border-left-color:#C0C0C0; background:#f0f0f0}
+.new td {border-left-color:#B89433; background:#F0D897}

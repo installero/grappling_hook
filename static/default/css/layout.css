@@ -7,7 +7,7 @@
 .l-header-nav ul {float:left; list-style:none}
 .l-header-nav ul li {float:left; list-style:none; margin-right:5px}
 
-.l-content {float:left; width:620px; padding-right:20px}
+.l-content {float:left; width:800px; padding-right:20px}
 .l-sidebar .module,
 .l-content .module {overflow:hidden; margin-bottom:2em; clear:both}
 .l-sidebar {float:right; width:300px; padding:10px}

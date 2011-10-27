@@ -27,9 +27,6 @@
 				<input type="submit" value="Сохранить информацию"/>
 			</div>
 		</form>
-		<script type="text/javascript">
-      tinyMCE.init({mode:"textareas"});
-		</script>
 	</xsl:template>
 
 	<xsl:template match="*" mode="p-feature-groups">
@@ -40,33 +37,22 @@
 				</pre>
 			</div>
 		</xsl:if>
-		<table width="100%">
-			<tr>
-				<td>
-					заголовок
-				</td>
-				<td>
-					файл теста
-				</td>
-				<td>
-					последний запуск
-				</td>
-				<td>
-				</td>
-			</tr>
 			<xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
-		</table>
 	</xsl:template>
 	
 	<xsl:template match="*" mode="p-feature-group-list-item">
-		<tr>
-			<td colspan="4">
-				<h2>
-					<xsl:value-of select="@title" />
-				</h2>
-			</td>
-		</tr>
-		<xsl:apply-templates select="features" mode="p-feature-list" />		
+    <div class="p-feature-group">
+      <h2><xsl:value-of select="@title"/></h2>
+      <table class="p-feature-group-table">
+        <thead>
+          <th class="p-feature-group-title">Тест</th>
+          <th class="p-feature-group-last_run">Прогон</th>
+          <th></th>
+          <th class="p-feature-group-control"></th>
+        </thead>
+        <xsl:apply-templates select="features" mode="p-feature-list" />		
+      </table>
+    </div>
 	</xsl:template>
 
 	<xsl:template match="*" mode="p-feature-show">
@@ -80,26 +66,29 @@
 	</xsl:template>
 
 	<xsl:template match="*" mode="p-feature-list-item">
-    <tr class="p-feature-list {@status_description}">
+    <tr class="p-feature-list {@status_description}" id="{@id}">
 			<td class="p-feature-list-title">
 				<a href="{@path}">
 					<xsl:value-of select="@title" />
 				</a>
 			</td>
-			<td>
-				<xsl:value-of select="@filepath" />
+			<td class="p-feature-last_run">
+        <xsl:call-template name="helpers-abbr-time">
+          <xsl:with-param select="@last_run" name="time"/>
+        </xsl:call-template>
 			</td>
+      <td class="p-feature-last_message"></td>
 			<td>
-				<xsl:value-of select="@last_run" />
-			</td>
-			<td>
-				<form method="post">
-					<input type="hidden" value="FeaturesWriteModule" name="writemodule" />
-					<input type="hidden" value="run" name="action" />
-					<input type="hidden" value="{@id}" name="id" />
-					<input type="submit" value="run" />
-				</form>
-			</td>
+        <a href="#" class="run-feature">Запустить</a>
+        <noscript>
+          <form method="post">
+            <input type="hidden" value="FeaturesWriteModule" name="writemodule" />
+            <input type="hidden" value="run" name="action" />
+            <input type="hidden" value="{@id}" name="id" />
+            <input type="submit" value="run" />
+          </form>
+        </noscript>
+      </td>
 		</tr>
 	</xsl:template>
 
@@ -117,7 +106,9 @@
 				<xsl:value-of select="@filepath" />
 			</td>
 			<td>
-				<xsl:value-of select="@last_run" />
+        <xsl:call-template name="helpers-abbr-time">
+          <xsl:with-param select="@last_run" name="time"/>
+        </xsl:call-template>
 			</td>
 		</tr>
 		<div>
