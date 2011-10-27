@@ -3,6 +3,8 @@
 	<data>
 		<title>Список тестов</title>
     <stylesheet path="partials/feature"/>
+		<javascript path="jquery.timeago" />
+    <javascript path="partials/feature"/>
 		<role need="50"/>
 	</data>
 	<blocks>
