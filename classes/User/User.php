@@ -333,6 +333,7 @@ class User {
 
 			Database::query($query);
 		}
+		Users::dropCache($this->id);
 	}
 
 }
