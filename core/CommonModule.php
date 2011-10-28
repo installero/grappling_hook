@@ -91,7 +91,7 @@ class CommonModule extends BaseModule {
 		$cond = new Conditions();
 		if ($this->ConditionsEnabled) {
 			// пейджинг, сортировка
-			if ($sortings || $default_sortings) {
+			if ($sortings) {
 				$cond->setSorting($sortings, $default_sortings);
 				$order = $cond->getSortingField();
 				$sorting_order = $cond->getSortingOrderSQL();
@@ -110,11 +110,14 @@ class CommonModule extends BaseModule {
 		}
 		$query = $this->prepareSelect('id', $where, $order ? ($order . ' ' . $sorting_order) : '', $limit);
 		$ids = Database::sql2array($query, 'id'); // нашли объекты, которые хотим вывести
-		$this->data['conditions'] = $cond->getConditions();
-		if ($return)
+
+		if ($return) {
+			$this->data['conditions'] = $cond->getConditions();
 			return $this->_idsToData(array_keys($ids)); // отдаем массив
+		}
 		else
 			$this->data = $this->_idsToData(array_keys($ids)); // отдаем массив
+		$this->data['conditions'] = $cond->getConditions();
 		return true;
 	}
 
