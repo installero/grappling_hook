@@ -74,7 +74,10 @@ class features_module extends CommonModule {
 		$i = 0;
 		foreach ($data['features'] as $feature) {
 			$groups[$feature['group_id']]['features'][] = $feature;
-			$groups[$feature['group_id']]['path_edit'] = 'groups/' . $feature['group_id'] . '/edit';
+			if ($feature['group_id']) {
+				$groups[$feature['group_id']]['path_edit'] = 'groups/' . $feature['group_id'] . '/edit';
+				$groups[$feature['group_id']]['path_delete'] = 'groups/' . $feature['group_id'] . '/delete';
+			}
 		}
 		if (isset($groups[0]))
 			$groups[0]['title'] = 'без группы';
