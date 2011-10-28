@@ -27,6 +27,9 @@ class FeaturesWriteModule extends BaseWriteModule {
 		);
 		if ($data['title'])
 			Features::getInstance()->_create($data);
+		@ob_end_clean();
+		header('Location: ' . Config::need('www_path') . '/features');
+		exit(0);
 	}
 
 	function _update() {
@@ -38,7 +41,10 @@ class FeaturesWriteModule extends BaseWriteModule {
 		    'group_id' => isset(Request::$post['group_id']) ? (int) Request::$post['group_id'] : false,
 		);
 		if ($data['title'] && $data['id'])
-			Features::getInstance()->_update($data);
+			Features::getInstance()->getByIdLoaded($data['id'])->_update($data);
+		@ob_end_clean();
+		header('Location: ' . Config::need('www_path') . '/features');
+		exit(0);
 	}
 
 	function _run() {

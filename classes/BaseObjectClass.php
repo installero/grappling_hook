@@ -26,13 +26,14 @@ class BaseObjectClass {
 	}
 
 	function _update($data, $tableName) {
+		unset($data['id']);
 		$q = array();
 		$this->dropCache();
 		foreach ($data as $field => $value) {
 			if (isset($this->fieldsMap[$field])) {
 				$q[] = '`' . $field . '`=' . Database::escape($value);
 			}else
-				throw new Exception('_create failed: illegal field #' . $field);
+				throw new Exception('_update failed: illegal field #' . $field);
 		}
 		if (count($q)) {
 			Database::query('UPDATE `' . $tableName . '` SET ' . implode(',', $q) . ' WHERE `id`=' . $this->id);

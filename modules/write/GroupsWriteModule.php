@@ -19,6 +19,9 @@ class GroupsWriteModule extends BaseWriteModule {
 		);
 		if ($data['title'] && $data['folder'])
 			$this->_upsert($data);
+		@ob_end_clean();
+		header('Location: ' . Config::need('www_path') . '/features');
+		exit(0);
 	}
 
 	function _update() {
@@ -42,6 +45,9 @@ class GroupsWriteModule extends BaseWriteModule {
 		if (count($q)) {
 			Database::query('INSERT INTO `feature_groups` SET ' . implode(',', $q) . ' ON DUPLICATE KEY UPDATE  ' . implode(',', $q));
 		}
+		@ob_end_clean();
+		header('Location: ' . Config::need('www_path') . '/features');
+		exit(0);
 	}
 
 }

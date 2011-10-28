@@ -8,9 +8,12 @@ class Conditions {
 	private $totalCount;
 	//
 	public $sorting;
+	public $limit;
 	//
 	private $url;
 	private $pagingParameterName = 'p';
+	private $defaultSortingField = '';
+	private $defaultSortingOrder = '';
 
 	function __construct() {
 		$this->url = Request::$get_normal;
@@ -26,18 +29,34 @@ class Conditions {
 	}
 
 	private function getLastPage() {
-		return ceil($this->totalCount / max(1,$this->perPage));
+		return ceil($this->totalCount / max(1, $this->perPage));
 	}
 
 	function getLimit() {
+		if ($this->limit)
+			return $this->limit;
 		return (($this->currentPage - 1) * $this->perPage) . ' , ' . $this->perPage;
 	}
-	
+
+	function setLimit($limit) {
+		$this->limit = max(0, (int) $limit);
+	}
+
 	function getMongoLimit() {
+		if ($this->limit)
+			return 0;
 		return (($this->currentPage - 1) * $this->perPage);
 	}
 
-	function setSorting($options) {
+	function setSorting($options, $defaut = false) {
+		if ($defaut) {
+			foreach ($defaut as $fieldName => $data) {
+				$this->defaultSortingField = $fieldName;
+				if (isset($data['order'])) {
+					$this->defaultSortingOrder = $data['order'];
+				}
+			}
+		}
 		$other = ($this->getSortingOrder() == 'desc') ? 'asc' : 'desc';
 		foreach ($options as $name => $option) {
 			$opt = $option;
@@ -53,13 +72,13 @@ class Conditions {
 
 	function getSortingField() {
 		$p = isset(Request::$get_normal['sort']) ? Request::$get_normal['sort'] : '';
-		if(!isset($this->sorting[$p]))
-			return '';
+		if (!isset($this->sorting[$p]))
+			return $this->defaultSortingField;
 		return $p;
 	}
 
 	function getSortingOrderSQL() {
-		$p = isset(Request::$get_normal['order']) ? Request::$get_normal['order'] : 'desc';
+		$p = isset(Request::$get_normal['order']) ? Request::$get_normal['order'] : $this->defaultSortingOrder;
 		$p = ($p == 'desc') ? 'DESC' : 'ASC';
 		return $p;
 	}
@@ -89,7 +108,7 @@ class Conditions {
 	}
 
 	private function getSortingOrder() {
-		$p = isset(Request::$get_normal['order']) ? Request::$get_normal['order'] : 'asc';
+		$p = isset(Request::$get_normal['order']) ? Request::$get_normal['order'] : $this->defaultSortingOrder;
 		$p = ($p == 'asc') ? 'asc' : 'desc';
 		return $p;
 	}
@@ -120,7 +139,7 @@ class Conditions {
 
 	function getConditions() {
 		$out = array();
-		if (count($this->paging)>1)
+		if (count($this->paging) > 1)
 			$out[] = array('mode' => 'paging', 'options' => $this->paging);
 		if ($this->sorting)
 			$out[] = array('mode' => 'sorting', 'options' => array_values($this->sorting));

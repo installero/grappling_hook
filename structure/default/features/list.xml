@@ -8,6 +8,9 @@
 		<role need="50"/>
 	</data>
 	<blocks>
-		<content><module name="features" action="list" /></content>
+		<content><module name="features" action="list" >
+		 <param name="per_page" type="var" value="50"/>
+        <param name="paging_parameter_name" type="var" value="p_f" />
+		</module></content>
 	</blocks>
 </structure>

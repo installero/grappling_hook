@@ -12,6 +12,9 @@ class Jfeatures_module extends JBaseModule {
 			case 'check':
 				$this->checkTest();
 				break;
+			case 'delete':
+				$this->deleteTest();
+				break;
 		}
 	}
 
@@ -19,6 +22,38 @@ class Jfeatures_module extends JBaseModule {
 		$this->data['success'] = 0;
 		$this->data['error'] = $s;
 		return;
+	}
+
+	function deleteTest() {
+		global $current_user;
+		if (!$current_user->authorized) {
+			$this->error('Auth');
+			return;
+		}
+
+		if ($current_user->getRole() < User::ROLE_SITE_ADMIN) {
+			$this->error('Must be admin');
+			return;
+		}
+
+		$id = isset($_POST['id']) ? (int) $_POST['id'] : false;
+		if (!$id) {
+			$this->error('Illegal id');
+			return;
+		}
+
+		$feature = Features::getInstance()->getByIdLoaded($id);
+		/* @var $feature Feature */
+		if ($feature->loaded) {
+			$query = 'UPDATE `features` SET `deleted`=1 WHERE `id`=' . $id;
+			Database::query($query);
+			$this->data = array(
+			    'id' => $id,
+			    'success' => 1
+			);
+		} else {
+			$this->error('no feature to delete');
+		}
 	}
 
 	function runTest() {

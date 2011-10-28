@@ -21,6 +21,11 @@ class CommonModule extends BaseModule {
 				$this->ConditionsEnabled = true;
 			}
 		}
+		if (isset($this->params['limit'])) {
+			if ($this->params['limit']) {
+				$this->ConditionsEnabled = true;
+			}
+		}
 	}
 
 	function prepareSelect($fields = '*', $where = false, $order = false, $limit = false) {
@@ -79,32 +84,37 @@ class CommonModule extends BaseModule {
 	 * @param type $sortings
 	 * @param type $return 
 	 */
-	function _list($where, $sortings = false, $return = false) {
+	function _list($where, $sortings = false, $return = false, $default_sortings = false) {
 		$limit = false;
 		$order = false;
 		$sorting_order = false;
 		$cond = new Conditions();
 		if ($this->ConditionsEnabled) {
 			// пейджинг, сортировка
-			if ($sortings) {
-				$cond->setSorting($sortings);
+			if ($sortings || $default_sortings) {
+				$cond->setSorting($sortings, $default_sortings);
 				$order = $cond->getSortingField();
 				$sorting_order = $cond->getSortingOrderSQL();
 			}
 			$per_page = isset($this->params['per_page']) ? $this->params['per_page'] : 0;
+			$limit_parameter = isset($this->params['limit']) ? $this->params['limit'] : 0;
 			$pagingName = isset($this->params['paging_parameter_name']) ? $this->params['paging_parameter_name'] : 'p';
 			if ($per_page) {
 				$cond->setPaging($this->getCountBySQL($where), $per_page, $pagingName);
 				$limit = $cond->getLimit();
 			}
+			if ($limit_parameter) {
+				$cond->setLimit($limit_parameter);
+				$limit = $cond->getLimit();
+			}
 		}
 		$query = $this->prepareSelect('id', $where, $order ? ($order . ' ' . $sorting_order) : '', $limit);
 		$ids = Database::sql2array($query, 'id'); // нашли объекты, которые хотим вывести
+		$this->data['conditions'] = $cond->getConditions();
 		if ($return)
 			return $this->_idsToData(array_keys($ids)); // отдаем массив
 		else
 			$this->data = $this->_idsToData(array_keys($ids)); // отдаем массив
-		$this->data['conditions'] = $cond->getConditions();
 		return true;
 	}
 

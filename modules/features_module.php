@@ -26,6 +26,7 @@ class features_module extends CommonModule {
 				switch ($mode) {
 					default:
 						$this->_show($this->params['feature_id']);
+						$this->_new();
 						break;
 				}
 				break;
@@ -42,9 +43,16 @@ class features_module extends CommonModule {
 		}
 	}
 
+	function _new() {
+		$this->data['groups'] = Database::sql2array('SELECT * FROM `feature_groups` WHERE `deleted`=0');
+	}
+
 	function getFeaturesList() {
-		$where = '';
-		$data = $this->_list($where, false, 1);
+		$where = '`deleted`=0';
+		$sortings = array(
+		    'group_id' => array('group_id' => 'по группе', 'order' => 'asc'),
+		);
+		$data = $this->_list($where, array(), 1, $sortings);
 		foreach ($data['features'] as &$item) {
 			$item['path_edit'] = 'features/' . $item['id'] . '/edit';
 			$item['path_delete'] = 'features/' . $item['id'] . '/delete';
@@ -61,16 +69,15 @@ class features_module extends CommonModule {
 		foreach ($data['features'] as $item) {
 			$groups[$item['group_id']] = $item['group_id'];
 		}
-		$query = 'SELECT * FROM `feature_groups` WHERE `id` IN(' . implode(',', $groups) . ')';
+		$query = 'SELECT * FROM `feature_groups` WHERE `id` IN(' . implode(',', $groups) . ') AND `deleted`=0';
 		$groups = Database::sql2array($query, 'id');
 		$i = 0;
 		foreach ($data['features'] as $feature) {
 			$groups[$feature['group_id']]['features'][] = $feature;
-			if ($feature['group_id'])
-				$groups[$feature['group_id']]['path_edit'] = 'groups/' . $feature['group_id'] . '/edit';
+			$groups[$feature['group_id']]['path_edit'] = 'groups/' . $feature['group_id'] . '/edit';
 		}
 		if (isset($groups[0]))
-			$groups[0] = array('title' => 'без группы');
+			$groups[0]['title'] = 'без группы';
 
 		return $groups;
 	}
