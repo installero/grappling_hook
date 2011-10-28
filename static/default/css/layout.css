@@ -38,7 +38,7 @@ a {color:#06a}
 .l-content .module .form-field label {float:left; width:150px; line-height:2em}
 .l-content .module .form-field input,
 .l-content .module .form-field select {width:200px}
-.l-content .module .form-field textarea {width:400px}
+.l-content .module .form-field textarea {width:400px; height:200px; font-size:130%}
 .l-content .module .form-field b {float:left; line-height:2em}
 .l-content .module .form-control {margin-top:1em; padding-top:1em; border-top:1px solid #d0d0d0}
 .l-content .module .form-notice,

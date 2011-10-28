@@ -69,16 +69,10 @@
 
 	<xsl:template match="*" mode="l-header-nav">
 		<ul>
-			<li>
-				<a href="{&prefix;}features">Список тестов</a>
-			</li>
+			<li><a href="{&prefix;}features">Список фич</a></li>
+      <li><a href="{&prefix;}features/new">Добавить фичу</a></li>
+      <li><a href="{&prefix;}groups/new">Добавить группу</a></li>
 		</ul>
-		<ul>
-			<p>
-				<a href="{&prefix;}features">Тесты</a>
-			</p>	
-		</ul>
-		
 	</xsl:template>
 
 	<xsl:template match="*" mode="l-footer-nav">

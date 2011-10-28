@@ -1,12 +1,18 @@
-.p-feature-group {margin-bottom:2em}
-.p-feature-group-table {width:100%}
+.p-feature-group {margin-bottom:2em; overflow:hidden}
+.p-feature-group-title {float:left}
+.p-feature-group-edit a {font-size:80%; margin-left:5px; color:#a0a0a0}
+.p-feature-group-delete a {font-size:80%; margin-left:5px; color:#FF7A7A}
+.p-feature-group-table {width:100%; clear:both}
 .p-feature-group-table th {color:#aaa; font-weight:bold; padding-bottom:2px}
-.p-feature-group-title {width:20%}
-.p-feature-group-last_run {width:20%}
-.p-feature-group-control {width:10%}
 
-.p-feature-list-title {border-left-width:15px; border-left-style:solid; padding-left:10px}
+.p-feature-title {width:50%}
+.p-feature-last_run {width:20%}
+.p-feature-control {width:10%}
+
+.p-feature-title {border-left-width:5px; border-left-style:solid; padding-left:10px}
 .p-feature-list td {vertical-align:middle; padding:5px 5px 5px 10px}
+.p-feature-list-edit {font-size:80%; color:#a0a0a0; margin-left:2px}
+.p-feature-list-delete {font-size:80%; color:#FF7A7A; margin-left:2px}
 
 .ok td {border-left-color:#2C6E07; background:#C3FAAF}
 .failed td {border-left-color:#EB3636; background:#FA8E8E}

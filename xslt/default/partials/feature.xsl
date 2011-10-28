@@ -4,52 +4,86 @@
 	<xsl:output doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 	<xsl:template match="module[@name='features' and @action='new']" mode="p-module">
+    <xsl:apply-templates select="." mode="p-feature-form"/>
+	</xsl:template>
+
+	<xsl:template match="module[@name='features' and @action='edit']" mode="p-module">
+    <xsl:apply-templates select="feature" mode="p-feature-form">
+      <xsl:with-param select="groups" name="groups"/>
+    </xsl:apply-templates>
+	</xsl:template>
+
+  <xsl:template match="*" mode="p-feature-form">
+    <xsl:param select="groups" name="groups"></xsl:param>
 		<form method="post" action="">
 			<input type="hidden" name="writemodule" value="FeaturesWriteModule" />
-			<input type="hidden" name="id" value="0" />
+      <input type="hidden" name="id" value="{@id}" />
 			<div class="form-group">
 				<h2>Добавление теста</h2>
 				<div class="form-field">
 					<label>Название теста</label>
-					<input name="title"/>
+          <input name="title" value="{@title}"/>
 				</div>
-				<h2>Добавление теста</h2>
+        <xsl:apply-templates select="." mode="h-field-input">
+          <xsl:with-param select="'title'" name="name"/>
+          <xsl:with-param select="'Название книги'" name="label"/>
+        </xsl:apply-templates>
+				<div class="form-field">
+					<label>Группа</label>
+          <select name="group_id">
+            <xsl:apply-templates select="$groups/item" mode="p-feature-group-option">
+              <xsl:with-param select="@group_id" name="group_id"/>
+            </xsl:apply-templates>
+          </select>
+				</div>
 				<div class="form-field">
 					<label>Пояснение к тесту</label>
-					<textarea name="description"></textarea>
+          <textarea name="description">
+            <xsl:value-of select="@description"/>
+          </textarea>
 				</div>
 				<div class="form-field">
 					<label>Путь до файла (относительно папки features/)</label>
-					<input name="filepath"/>
+          <input name="filepath" value="{@filepath}"/>
 				</div>
 			</div>
 			<div class="form-control">
 				<input type="submit" value="Сохранить информацию"/>
 			</div>
 		</form>
-	</xsl:template>
+  </xsl:template>
+
+  <xsl:template match="*" mode="h-field-input">
+    <xsl:param name="name" select="''"/>
+    <xsl:param name="label" select="''"/>
+    <div class="form-field">
+      <label><xsl:value-of select="$label"/></label>
+      <input name="{$name}" value="{@*[name()=$name]}"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="*" mode="p-feature-group-option">
+    <xsl:param select="group_id" name="group_id"/>
+    <option value="{@id}">
+      <xsl:if test="@id=$group_id"><xsl:attribute name="selected" select="'selected'"/></xsl:if>
+      <xsl:value-of select="@title"/>
+    </option>
+  </xsl:template>
 
 	<xsl:template match="*" mode="p-feature-groups">
-		<xsl:if test="parent::module/write/@run_result">
-			<div style="width:100%;overflow:auto">
-				<pre>
-					<xsl:value-of select="parent::module/write/@run_result" disable-output-escaping="yes" />	
-				</pre>
-			</div>
-		</xsl:if>
-			<xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
+    <xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
 	</xsl:template>
 	
 	<xsl:template match="*" mode="p-feature-group-list-item">
-    <div class="p-feature-group">
-      <h2><xsl:value-of select="@title"/></h2>
+    <div class="p-feature-group" id="{@id}">
+      <h2 class="p-feature-group-title">
+        <xsl:value-of select="@title"/>
+        <xsl:if test="@path_edit">
+          <em class="p-feature-group-edit"><a href="{@path_edit}">ред.</a></em>
+          <em class="p-feature-group-delete"><a href="#">x</a></em>
+        </xsl:if>
+      </h2>
       <table class="p-feature-group-table">
-        <thead>
-          <th class="p-feature-group-title">Тест</th>
-          <th class="p-feature-group-last_run">Прогон</th>
-          <th></th>
-          <th class="p-feature-group-control"></th>
-        </thead>
         <xsl:apply-templates select="features" mode="p-feature-list" />		
       </table>
     </div>
@@ -67,18 +101,20 @@
 
 	<xsl:template match="*" mode="p-feature-list-item">
     <tr class="p-feature-list {@status_description}" id="{@id}">
-			<td class="p-feature-list-title">
-				<a href="{@path}">
-					<xsl:value-of select="@title" />
-				</a>
+			<td class="p-feature-title">
+        <a href="{@path}" class="show-feature-description"><xsl:value-of select="@title"/></a>
+        <a href="{@path_edit}" class="p-feature-list-edit" >ред.</a>
+        <a href="#" class="p-feature-list-delete" >x</a>
+        <div class="p-feature-description">
+          <xsl:value-of select="@description"/>
+        </div>
 			</td>
 			<td class="p-feature-last_run">
         <xsl:call-template name="helpers-abbr-time">
           <xsl:with-param select="@last_run" name="time"/>
         </xsl:call-template>
 			</td>
-      <td class="p-feature-last_message"></td>
-			<td>
+			<td class="p-feature-control">
         <a href="#" class="run-feature">Запустить</a>
         <noscript>
           <form method="post">
