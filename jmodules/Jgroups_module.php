@@ -36,7 +36,7 @@ class Jgroups_module extends JBaseModule {
 			return;
 		}
 
-		$query = 'UPDATE `features_groups` SET `deleted`=1 WHERE `id`=' . $id;
+		$query = 'UPDATE `feature_groups` SET `deleted`=1 WHERE `id`=' . $id;
 		Database::query($query);
 		$query = 'UPDATE `features` SET `group_id`=0 WHERE `group_id`=' . $id;
 		Database::query($query);
