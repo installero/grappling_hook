@@ -47,6 +47,8 @@ a {color:#06a}
 .l-content .module .form-notice {background-color: #C5FCA3; border-color: #62CF21}
 .l-content .module .form-error-exp {color:red; font-size:80%}
 
+.l-content #description {position:relative; width:650px; height:400px}
+
 .l-sidebar-add-item {margin-bottom:.5em}
 
 .conditions-item {margin-bottom:1em}
