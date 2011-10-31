@@ -56,4 +56,14 @@
     <script src="{$path}" type="text/javascript"></script>
   </xsl:template>
 
+  <xsl:template match="*" mode="h-field-input">
+    <xsl:param name="name" select="''"/>
+    <xsl:param name="label" select="''"/>
+    <div class="form-field">
+      <label><xsl:value-of select="$label"/></label>
+      <input name="{$name}" value="{@*[name()=$name]}"/>
+    </div>
+  </xsl:template>
+
+
 </xsl:stylesheet>
