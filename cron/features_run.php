@@ -16,7 +16,7 @@ require 'include.php';
 $test_delay = 5;
 $test_delay_normal = 1800;
 $failed_cnt = 0;
-$max_failed_cnt = 10;
+$max_failed_cnt = 20;
 $lockfile = 'cron/features.lock';
 
 function _log($s) {
@@ -44,7 +44,7 @@ function work() {
 	$query = 'SELECT `id` FROM `features` WHERE 
 		(`status`=' . Feature::STATUS_FAILED . ' AND `last_run`<(' . (time() - $test_delay) . '))
 		OR
-		(`last_run`<(' . (time() - $test_delay_normal) . '))
+		(`last_run`<(' . (time() - $test_delay_normal) . ') AND (`status`='.Feature::STATUS_OK.' OR `status`='.Feature::STATUS_NEW.'))
 		ORDER BY `last_run`';
 
 	$arr = Database::sql2array($query, 'id');

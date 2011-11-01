@@ -41,7 +41,7 @@ function work() {
 	$query = 'SELECT `id` FROM `features` WHERE 
 		(`status`=' . Feature::STATUS_WAIT_FOR_RUN . ' AND `last_run`<(' . (time() - $test_delay) . '))
 		ORDER BY `last_run`';
-	$query = 'SELECT 27 as id FROM `features` LIMIT 1';
+	//$query = 'SELECT 27 as id FROM `features` LIMIT 1';
 		
 
 	$arr = Database::sql2array($query, 'id');
