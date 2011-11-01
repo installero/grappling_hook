@@ -84,7 +84,7 @@ class Jfeatures_module extends JBaseModule {
 		    'id' => $id,
 		    'status_description' => $feature->getStatusDescription(),
 		    'last_run' => date('Y/m/d H:i', $feature->getLastRun()),
-		    'last_message' => implode("\n", $description),
+		    'last_message' => 'waiting for run',
 		    'success' => 1
 		);
 	}

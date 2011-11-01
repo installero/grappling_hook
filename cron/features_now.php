@@ -1,0 +1,69 @@
+<pre><?php
+ini_set('display_errors', 1);
+require '../config.php';
+
+if (file_exists('../localconfig.php'))
+	require_once '../localconfig.php';
+else
+	$local_config = array();
+Config::init($local_config);
+
+chdir(Config::need('base_path'));
+
+require 'include.php';
+$test_delay = 2;
+$test_delay_normal = 1800;
+$failed_cnt = 0;
+$max_failed_cnt = 10;
+$lockfile = 'cron/features_now.lock';
+
+function _log($s) {
+	echo time() . ' ' . $s . "\n";
+}
+
+function lock_active() {
+	global $lockfile;
+	file_put_contents($lockfile, time());
+}
+
+$last_active = (int) file_get_contents($lockfile);
+if (time() - $last_active > $test_delay) {
+	while (true) {
+		lock_active();
+		work();
+	}
+} else {
+	die('another demon');
+}
+
+function work() {
+	global $test_delay, $test_delay_normal, $failed_cnt, $max_failed_cnt;
+	$query = 'SELECT `id` FROM `features` WHERE 
+		(`status`=' . Feature::STATUS_WAIT_FOR_RUN . ' AND `last_run`<(' . (time() - $test_delay) . '))
+		ORDER BY `last_run`';
+	$query = 'SELECT 27 as id FROM `features` LIMIT 1';
+		
+
+	$arr = Database::sql2array($query, 'id');
+	$features = Features::getInstance()->getByIdsLoaded(array_keys($arr));
+	foreach ($features as $feature) {
+		/* @var $feature Feature */
+		lock_active();
+		$feature->dropCache();
+		$res = $feature->_run();
+		print_r($res);
+		_log($feature->getFilePath());
+	}
+	lock_active();
+	if (!count($features)) {
+		_log('no features to process');
+		sleep($test_delay);
+		$failed_cnt++;
+	}
+
+	if ($max_failed_cnt < $failed_cnt) {
+		_log('nothing to test count ' . $failed_cnt);
+		die();
+	}
+}
+
