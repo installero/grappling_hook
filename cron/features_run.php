@@ -10,12 +10,14 @@ Config::init($local_config);
 
 chdir(Config::need('base_path'));
 
+echo Config::need('base_path');
+
 require 'include.php';
 $test_delay = 5;
 $test_delay_normal = 1800;
 $failed_cnt = 0;
 $max_failed_cnt = 10;
-$lockfile = '/w/ru.jnpe.ls2/data/grappling_hook/cron/features.lock';
+$lockfile = 'cron/features.lock';
 
 function _log($s) {
 	echo time() . ' ' . $s . "\n";

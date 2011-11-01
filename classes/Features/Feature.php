@@ -60,7 +60,8 @@ class Feature extends BaseObjectClass {
 	function _run() {
 		$this->load();
 
-		$command = '/usr/local/bin/behat -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
+		//$command = '/usr/local/bin/behat -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
+    $command = 'cd ../ && bundle exec cucumber -f progress -r features features/'.$this->getFilePath().' > log/cucumber.log';
 		exec($command, $output, $return_var);
 
 		$recording = false;
