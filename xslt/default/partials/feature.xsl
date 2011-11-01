@@ -102,7 +102,8 @@
         </xsl:call-template>
 			</td>
 			<td class="p-feature-control">
-        <a href="#" class="run-feature">Запустить</a>
+        <a href="#" class="pause-feature">=</a>
+        <a href="#" class="run-feature">→</a>
         <noscript>
           <form method="post">
             <input type="hidden" value="FeaturesWriteModule" name="writemodule" />
@@ -117,17 +118,9 @@
 
 	<xsl:template match="*" mode="p-feature-item">
 		<tr>
-			<td>
-				<a href="{@path}">
-					<xsl:value-of select="@title" />
-				</a>
-			</td>
-			<td>
-				<xsl:value-of select="@status" />
-			</td>
-			<td>
-				<xsl:value-of select="@filepath" />
-			</td>
+			<td><a href="{@path}"><xsl:value-of select="@title"/></a></td>
+			<td><xsl:value-of select="@status"/></td>
+			<td><xsl:value-of select="@filepath"/></td>
 			<td>
         <xsl:call-template name="helpers-abbr-time">
           <xsl:with-param select="@last_run" name="time"/>

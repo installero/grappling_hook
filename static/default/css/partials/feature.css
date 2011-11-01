@@ -8,14 +8,22 @@
 
 .p-feature-title {width:50%}
 .p-feature-last_run {width:20%}
-.p-feature-control {width:10%}
+.p-feature-control {width:6%}
 
 .p-feature-title {border-left-width:5px; border-left-style:solid; padding-left:10px}
-.p-feature-list td {vertical-align:middle; padding:5px 5px 5px 10px}
+.p-feature-list td {vertical-align:top; padding:5px 5px 5px 10px}
 .p-feature-list-edit {font-size:80%; color:#a0a0a0; margin-left:2px}
 .p-feature-list-delete {font-size:80%; color:#FF7A7A; margin-left:2px}
+.p-feature-control a {font-size:150%; text-decoration:none}
+
+.pause-feature {
+  writing-mode:tb-rl;
+  -webkit-transform:rotate(90deg);
+  -moz-transform:rotate(90deg);
+  -o-transform: rotate(90deg);
+}
 
 .ok td {border-left-color:#2C6E07; background:#C3FAAF}
 .failed td {border-left-color:#EB3636; background:#FA8E8E}
-.no_file td {border-left-color:#C0C0C0; background:#f0f0f0}
-.new td {border-left-color:#B89433; background:#F0D897}
+.paused td {border-left-color:#C0C0C0; background:#f0f0f0}
+.wait_for_run td {border-left-color:#6BDCFF; background:#E5F9FF}

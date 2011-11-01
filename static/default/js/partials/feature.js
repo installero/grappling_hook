@@ -1,5 +1,5 @@
-var checkFailedStatuses = function () {
-  $('.p-feature-list.failed').each(function(index) {
+var checkWaitingStatuses = function () {
+  $.merge($('.p-feature-list.paused'),$('.p-feature-list.ok')).each(function(index) {
     var tr =  $(this);
     var tr_class = tr.attr('class').split(' ')[1];
 
@@ -36,7 +36,6 @@ var checkAllStatuses = function () {
       } else if (data && data.error){alert(data.error);}
       else{alert(default_error_message);}
     }, "json");
-
   });
 }
 
@@ -72,7 +71,6 @@ $(function() {
   $('abbr.timeago').timeago();
 
   $('.run-feature').bind('click',function(){
-
     var link = $(this);
     var tr =  $(this).parents('tr');
     var tr_class = tr.attr('class').split(' ')[1];
@@ -92,10 +90,37 @@ $(function() {
       else{alert(default_error_message);}
     }, "json");
 
-    jqxhr.complete(function(){ link.html('Запустить'); });
+    jqxhr.complete(function(){ link.html('→'); });
+
+    return false;
+  });
+  
+  $('.pause-feature').bind('click',function(){
+    var link = $(this);
+    var tr =  $(this).parents('tr');
+    var tr_class = tr.attr('class').split(' ')[1];
+
+    var post_params = {
+      jquery:'features_module',
+      action:'pause',
+      id:tr.attr('id')
+    };
+
+    link.html('<img src="static/default/img/ajax.gif" alt="loading..."/>');
+
+    var jqxhr = $.post(exec_url, post_params, function(data){
+      if (data && data.success){
+        updateFeature(tr,tr_class,data)
+      } else if (data && data.error){alert(data.error);}
+      else{alert(default_error_message);}
+    }, "json");
+
+    jqxhr.complete(function(){ link.html('='); });
+
+    return false;
   });
 
-  setInterval(function() {checkFailedStatuses();}, 3000);
+  setInterval(function() {checkWaitingStatuses();}, 3000);
   setInterval(function() {checkAllStatuses();}, 60000);
 
   $('.p-feature-list-delete').bind('click',function(){
