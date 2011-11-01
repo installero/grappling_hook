@@ -80,6 +80,9 @@ class Jfeatures_module extends JBaseModule {
 		$query = 'UPDATE `features` SET `status`=' . Feature::STATUS_WAIT_FOR_RUN . ' WHERE `id`=' . $id;
 		Database::query($query);
 		$feature->setStatus(Feature::STATUS_WAIT_FOR_RUN, 'RUN FROM WEB INTERFACE BY ' . $current_user->getNickName());
+		usleep(10000);
+		$feature = Features::getInstance()->getByIdLoaded($id);
+		$feature->loaded = false;
 		$this->data = array(
 		    'id' => $id,
 		    'status_description' => $feature->getStatusDescription(),
