@@ -1,6 +1,7 @@
 <?php
 
 ini_set('upload_max_filesize', '15M');
+ini_set('date.timezone', 'Europe/Moscow');
 
 ini_set('mbstring.substitute_character', "none");
 $dev_mode = true;
