@@ -63,7 +63,7 @@ class Jfeatures_module extends JBaseModule {
 			$this->error('Auth');
 			return;
 		}
-
+		/* @var $current_user CurrentUser */
 		if ($current_user->getRole() < User::ROLE_SITE_ADMIN) {
 			$this->error('Must be admin');
 			return;
@@ -77,12 +77,9 @@ class Jfeatures_module extends JBaseModule {
 
 		$feature = Features::getInstance()->getByIdLoaded($id);
 		/* @var $feature Feature */
-		try {
-			list($success, $description) = $feature->_run();
-		} catch (Exception $e) {
-			$this->error($e->getMessage());
-		}
-
+		$query = 'UPDATE `features` SET `status`=' . Feature::STATUS_WAIT_FOR_RUN . ' WHERE `id`=' . $id;
+		Database::query($query);
+		$feature->setStatus(Feature::STATUS_WAIT_FOR_RUN, 'RUN FROM WEB INTERFACE BY ' . $current_user->getNickName());
 		$this->data = array(
 		    'id' => $id,
 		    'status_description' => $feature->getStatusDescription(),

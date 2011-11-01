@@ -4,7 +4,10 @@ class Feature extends BaseObjectClass {
 	const STATUS_OK = 1;
 	const STATUS_FAILED = 2;
 	const STATUS_NO_FILE = 3;
+	const STATUS_PAUSED = 4;
+	const STATUS_WAIT_FOR_RUN = 5;
 	const STATUS_NEW = 0;
+
 	//
 	public $id;
 	public $loaded = false;
@@ -54,13 +57,14 @@ class Feature extends BaseObjectClass {
 			`last_message`=' . Database::escape($message) . '
 				WHERE
 			`id`=' . $this->id;
+		$this->data['status'] = $status_code;
 		Database::query($query);
 	}
 
 	function _run() {
 		$this->load();
 
-		$command = '/usr/local/bin/behat -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
+		$command = '/usr/local/bin/cucumber -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
 		exec($command, $output, $return_var);
 
 		$recording = false;
