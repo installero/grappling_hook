@@ -11,10 +11,10 @@ Config::init($local_config);
 chdir(Config::need('base_path'));
 
 require 'include.php';
-$test_delay = 2;
+$test_delay = 1;
 $test_delay_normal = 1800;
 $failed_cnt = 0;
-$max_failed_cnt = 10;
+$max_failed_cnt = 100;
 $lockfile = 'cron/features_now.lock';
 
 function _log($s) {
@@ -33,6 +33,7 @@ if (time() - $last_active > $test_delay) {
 		work();
 	}
 } else {
+	file_put_contents($lockfile, 0);
 	die('another demon');
 }
 
@@ -51,7 +52,6 @@ function work() {
 		lock_active();
 		$feature->dropCache();
 		$res = $feature->_run();
-		print_r($res);
 		_log($feature->getFilePath());
 	}
 	lock_active();

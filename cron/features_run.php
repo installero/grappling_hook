@@ -13,10 +13,10 @@ chdir(Config::need('base_path'));
 echo Config::need('base_path');
 
 require 'include.php';
-$test_delay = 5;
+$test_delay = 1;
 $test_delay_normal = 1800;
 $failed_cnt = 0;
-$max_failed_cnt = 20;
+$max_failed_cnt = 100;
 $lockfile = 'cron/features.lock';
 
 function _log($s) {
@@ -36,6 +36,7 @@ if (time() - $last_active > $test_delay) {
 		work();
 	}
 } else {
+	file_put_contents($lockfile, 0);
 	die('another demon');
 }
 

@@ -67,7 +67,7 @@ class Feature extends BaseObjectClass {
 		$command = 'cd ../ && bundle exec cucumber -f progress -r features features/' . $this->getFilePath();
 		$f = '../features/' . $this->getFilePath();
 		if (!file_exists($f)) {
-			$this->setStatus(self::STATUS_NO_FILE, 'no file ' . $f);
+			$this->setStatus(self::STATUS_PAUSED, 'no file ' . $f);
 			return array(false, array('no file ' . $f));
 		}
 		exec($command, $output, $return_var);
@@ -134,7 +134,7 @@ class Feature extends BaseObjectClass {
 		    'status_description' => $this->getStatusDescription(),
 		    'group_id' => $this->getGroupId(),
 		    'filepath' => $this->getFileName(),
-		    'last_run' => ($last_run = $this->getLastRun()) ? date('Y/m/d H:i', $last_run) : 0,
+		    'last_run' => ($last_run = $this->getLastRun()) ? date('Y/m/d H:i:s', $last_run) : 0,
 		    'last_message' => $this->getLastMessage(),
 		    'path' => $this->getUrl(),
 		);
@@ -169,14 +169,11 @@ class Feature extends BaseObjectClass {
 			case self::STATUS_FAILED:
 				return 'failed';
 				break;
-			case self::STATUS_NO_FILE:
-				return 'no_file';
-				break;
-			case self::STATUS_PAUSED:
+			case self::STATUS_PAUSED:case self::STATUS_NO_FILE:
 				return 'paused';
 				break;
 			case self::STATUS_WAIT_FOR_RUN:
-				return 'wait_for_run';
+				return 'waiting';
 				break;
 		}
 		return 'unknown';
