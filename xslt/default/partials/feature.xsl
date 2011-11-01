@@ -20,13 +20,9 @@
       <input type="hidden" name="id" value="{@id}" />
 			<div class="form-group">
 				<h2>Добавление теста</h2>
-				<div class="form-field">
-					<label>Название теста</label>
-          <input name="title" value="{@title}"/>
-				</div>
         <xsl:apply-templates select="." mode="h-field-input">
           <xsl:with-param select="'title'" name="name"/>
-          <xsl:with-param select="'Название книги'" name="label"/>
+          <xsl:with-param select="'Название теста'" name="label"/>
         </xsl:apply-templates>
 				<div class="form-field">
 					<label>Группа</label>
@@ -36,11 +32,10 @@
             </xsl:apply-templates>
           </select>
 				</div>
-				<div class="form-field">
-					<label>Пояснение к тесту</label>
-          <textarea name="description">
-            <xsl:value-of select="@description"/>
-          </textarea>
+				<div class="form-field description">
+					<label>Текст файла</label>
+          <textarea name="description"><xsl:value-of select="@description"/></textarea>
+          <div id="description"/>
 				</div>
 				<div class="form-field">
 					<label>Путь до файла (относительно папки features/)</label>
@@ -53,19 +48,10 @@
 		</form>
   </xsl:template>
 
-  <xsl:template match="*" mode="h-field-input">
-    <xsl:param name="name" select="''"/>
-    <xsl:param name="label" select="''"/>
-    <div class="form-field">
-      <label><xsl:value-of select="$label"/></label>
-      <input name="{$name}" value="{@*[name()=$name]}"/>
-    </div>
-  </xsl:template>
-
   <xsl:template match="*" mode="p-feature-group-option">
     <xsl:param select="group_id" name="group_id"/>
     <option value="{@id}">
-      <xsl:if test="@id=$group_id"><xsl:attribute name="selected" select="'selected'"/></xsl:if>
+      <xsl:if test="@id=$group_id or @id=&page;/variables/@group_id"><xsl:attribute name="selected" select="'selected'"/></xsl:if>
       <xsl:value-of select="@title"/>
     </option>
   </xsl:template>
@@ -77,7 +63,8 @@
 	<xsl:template match="*" mode="p-feature-group-list-item">
     <div class="p-feature-group" id="{@id}">
       <h2 class="p-feature-group-title">
-        <xsl:value-of select="@title"/>
+        <em class="p-feature-group-show"><a href="#"><xsl:value-of select="@title"/></a></em>
+        <em class="p-feature-group-add_feature"><a href="{&prefix;}features/new?group_id={@id}">+1</a></em>
         <xsl:if test="@path_edit">
           <em class="p-feature-group-edit"><a href="{@path_edit}">ред.</a></em>
           <em class="p-feature-group-delete"><a href="#">x</a></em>
@@ -158,7 +145,5 @@
 			</pre>
 		</div>
 	</xsl:template>
-
-
 
 </xsl:stylesheet>

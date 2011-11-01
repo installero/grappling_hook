@@ -105,10 +105,12 @@ $(function() {
     return false;
   });
 
-  $('.p-feature-group-delete').bind('click',function(){
-    element = $(this).parents('div.p-feature-group');
-    id = element.attr('id');
-    deleteGroup(id,element);
+  $('.p-feature-group-delete a').bind('click',function(){
+    if(confirm("Вы увеерны, что хотите удалить группу тестов?")) {
+      element = $(this).parents('div.p-feature-group');
+      id = element.attr('id');
+      deleteGroup(id,element);
+    }
     return false;
   });
 
@@ -117,6 +119,10 @@ $(function() {
   });
 
   $('.p-feature-description').hide();
+
+  $('.p-feature-group-show').bind('click',function(){
+    $(this).parent().next('.p-feature-group-table').toggle(); return false;
+  });
 });
 
 var updateFeature = function (tr,tr_class,data){

@@ -1,5 +1,6 @@
 .p-feature-group {margin-bottom:2em; overflow:hidden}
 .p-feature-group-title {float:left}
+.p-feature-group-add_feature a {font-size:80%; margin-left:5px; font-weight:bold}
 .p-feature-group-edit a {font-size:80%; margin-left:5px; color:#a0a0a0}
 .p-feature-group-delete a {font-size:80%; margin-left:5px; color:#FF7A7A}
 .p-feature-group-table {width:100%; clear:both}
