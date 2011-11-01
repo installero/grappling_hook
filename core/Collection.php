@@ -11,13 +11,14 @@ class Collection {
 	public static $persons_instance = false;
 	public $items = array();
 	public $from_cache = array();
-	public $cache_time = 5;
+	public $cache_time = 0;
 
 	protected static function getInstance() {
 		throw new Exception('Collection::getInstance must be overriden');
 	}
 
 	public function putInCache($id, $force = false) {
+    if(!$this->cache_time) return false;
 		if (isset($this->from_cache[$id]))
 			return false;
 		if (isset($this->items[$id])) {

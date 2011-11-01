@@ -51,6 +51,7 @@ class Feature extends BaseObjectClass {
 	}
 
 	function setStatus($status_code, $message) {
+		$message = $message ? $message : 'empty message';
 		$query = 'UPDATE `features` SET
 			`status`=' . (int) $status_code . ',
 			`last_run`=' . time() . ',
@@ -63,16 +64,21 @@ class Feature extends BaseObjectClass {
 
 	function _run() {
 		$this->load();
-
-		$command = '/usr/local/bin/cucumber -f progress -c ' . Config::need('features_path') . 'behat.yml ' . Config::need('features_path') . $this->getFilePath();
+		$command = 'cd ../ && bundle exec cucumber -f progress -r features features/' . $this->getFilePath();
+		$f = '../features/' . $this->getFilePath();
+		if (!file_exists($f)) {
+			$this->setStatus(self::STATUS_NO_FILE, 'no file ' . $f);
+			return array(false, array('no file ' . $f));
+		}
 		exec($command, $output, $return_var);
-
+		file_put_contents('log/cucumber.log', implode("\n", $output));
 		$recording = false;
 		$error_message = '';
 		$code = self::STATUS_OK;
 		foreach ($output as $line) {
 			if ($recording)
 				$error_message.=$line . "\n";
+
 			if (strstr($line, '(::) failed steps (::)')) {
 				$recording = true;
 				$code = self::STATUS_FAILED;
@@ -87,10 +93,12 @@ class Feature extends BaseObjectClass {
 			}
 		}
 
-		if ($code != self::STATUS_OK) {
+		if ($code !== self::STATUS_OK) {
 			$this->setStatus($code, $error_message);
 		} else {
-			$this->setStatus($code, implode("\n", $output));
+			$om = implode("\n", $output);
+			$om = $om ? $om : 'empty output';
+			$this->setStatus($code, $om);
 		}
 		$this->dropCache();
 		return array($code == self::STATUS_OK, $output);
@@ -125,7 +133,7 @@ class Feature extends BaseObjectClass {
 		    'status' => $this->getStatus(),
 		    'status_description' => $this->getStatusDescription(),
 		    'group_id' => $this->getGroupId(),
-		    'filepath' => $this->getFilePath(),
+		    'filepath' => $this->getFileName(),
 		    'last_run' => ($last_run = $this->getLastRun()) ? date('Y/m/d H:i', $last_run) : 0,
 		    'last_message' => $this->getLastMessage(),
 		    'path' => $this->getUrl(),
@@ -164,6 +172,12 @@ class Feature extends BaseObjectClass {
 			case self::STATUS_NO_FILE:
 				return 'no_file';
 				break;
+			case self::STATUS_PAUSED:
+				return 'paused';
+				break;
+			case self::STATUS_WAIT_FOR_RUN:
+				return 'wait_for_run';
+				break;
 		}
 		return 'unknown';
 	}
@@ -173,7 +187,17 @@ class Feature extends BaseObjectClass {
 		return $this->data['group_id'];
 	}
 
+	function getFolder() {
+		$query = 'SELECT `folder` FROM `feature_groups` WHERE `id`=' . $this->getGroupId();
+		return Database::sql2single($query);
+	}
+
 	function getFilePath() {
+		$this->load();
+		return $this->getFolder() . '/' . $this->data['filepath'] . '.feature';
+	}
+
+	function getFileName() {
 		$this->load();
 		return $this->data['filepath'];
 	}

@@ -2,3 +2,5 @@
 /localconfig.php
 .project
 .settings/
+*.lock
+cache
