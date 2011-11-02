@@ -40,7 +40,7 @@ if (time() - $last_active > $test_delay) {
 function work() {
 	global $test_delay, $test_delay_normal, $failed_cnt, $max_failed_cnt;
 	$query = 'SELECT `id` FROM `features` WHERE 
-		(`status`=' . Feature::STATUS_WAIT_FOR_RUN . ' AND `last_run`<(' . (time() - $test_delay) . '))
+		(`status`=' . Feature::STATUS_WAIT_FOR_RUN . ' AND `last_run`<(' . (time() - 10) . '))
 		ORDER BY `last_run`';
 	//$query = 'SELECT 27 as id FROM `features` LIMIT 1';
 		
