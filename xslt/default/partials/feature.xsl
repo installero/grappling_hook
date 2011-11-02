@@ -109,6 +109,8 @@
             <input type="hidden" value="FeaturesWriteModule" name="writemodule" />
             <input type="hidden" value="run" name="action" />
             <input type="hidden" value="{@id}" name="id" />
+	    <input type="hidden" value="{@file_modify}" name="file_modify" />
+	    
             <input type="submit" value="run" />
           </form>
         </noscript>

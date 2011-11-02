@@ -39,9 +39,34 @@ class FeaturesWriteModule extends BaseWriteModule {
 		    'description' => isset(Request::$post['description']) ? prepare_review(Request::$post['description']) : false,
 		    'filepath' => isset(Request::$post['filepath']) ? prepare_review(Request::$post['filepath'], '') : false,
 		    'group_id' => isset(Request::$post['group_id']) ? (int) Request::$post['group_id'] : false,
+		    'db_modify' => time(),
 		);
 		if ($data['title'] && $data['id'])
 			Features::getInstance()->getByIdLoaded($data['id'])->_update($data);
+		if ($data['description']) {
+			// пишем в файл
+			$f = '../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
+
+			if (!file_exists($f)) {
+				@mkdir('../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
+				file_put_contents($f, $data['description']);
+				$file_modify = @fileatime($f);
+				$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
+				Database::query($query);
+			} else {
+				$file_modify = @fileatime($f);
+				if ($file_modify > Features::getInstance()->getByIdLoaded($data['id'])->getFileModifyTime()) {
+					// файл новее чем в базе 
+					throw new Exception('File was modified. Please refresh page');
+				} else {
+					file_put_contents($f, $data['description']);
+					$file_modify = @fileatime($f);
+					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
+					Database::query($query);
+				}
+			}
+		}
+
 		@ob_end_clean();
 		header('Location: ' . Config::need('www_path') . '/features');
 		exit(0);

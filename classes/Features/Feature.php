@@ -19,7 +19,9 @@ class Feature extends BaseObjectClass {
 	    'filepath' => 'string',
 	    'last_run' => 'int',
 	    'status' => 'int',
-	    'last_message' => 'html'
+	    'last_message' => 'html',
+	    'db_modify' => 'int',
+	    'file_modify' => 'int',
 	);
 
 	function __construct($id, $data = false) {
@@ -62,6 +64,16 @@ class Feature extends BaseObjectClass {
 		Database::query($query);
 	}
 
+	function getFileModifyTime() {
+		$this->load();
+		return (int) $this->data['file_modify'];
+	}
+
+	function getDbModifyTime() {
+		$this->load();
+		return (int) $this->data['db_modify'];
+	}
+
 	function _run() {
 		$this->load();
 		$command = 'cd ../ && bundle exec cucumber -f progress -r features features/' . $this->getFilePath();
@@ -70,6 +82,14 @@ class Feature extends BaseObjectClass {
 			$this->setStatus(self::STATUS_PAUSED, 'no file ' . $f);
 			return array(false, array('no file ' . $f));
 		}
+
+		$file_modify = fileatime($f);
+		if ($file_modify > $this->getFileModifyTime()) {
+			// file is newer tham db thinks
+			$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $this->id;
+			Database::query($query);
+		}
+
 		exec($command, $output, $return_var);
 		file_put_contents('log/cucumber.log', implode("\n", $output));
 		$recording = false;
@@ -137,6 +157,7 @@ class Feature extends BaseObjectClass {
 		    'last_run' => ($last_run = $this->getLastRun()) ? date('Y/m/d H:i:s', $last_run) : 0,
 		    'last_message' => $this->getLastMessage(),
 		    'path' => $this->getUrl(),
+		    'file_modify' => $this->getFileModifyTime(),
 		);
 		return $out;
 	}
@@ -148,7 +169,14 @@ class Feature extends BaseObjectClass {
 
 	function getDescription() {
 		$this->load();
-		return $this->data['description'];
+		$f = '../features/' . $this->getFilePath();
+		if (file_exists($f))
+			return file_get_contents($f);
+		if ($this->data['description']) {
+			@mkdir('../features/' . $this->getFolder());
+			file_put_contents($f, $this->data['description']);
+			return $this->data['description'];
+		}
 	}
 
 	function getStatus() {
