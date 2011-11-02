@@ -131,7 +131,9 @@
 		</tr>
 		<div>
 			<h3>описание теста</h3>
+			<pre>
 			<xsl:value-of select="@description" disable-output-escaping="yes"/>
+			</pre>
 		</div>
 		<div>
 			<h3>последний результат тестирования</h3>

@@ -117,10 +117,6 @@ class Feature extends BaseObjectClass {
 			}
 		}
 
-		$pattern = '/(\d+) scenarios \((\d+) undefined\)/isU';
-		$x = implode("\n", $output);
-		preg_match_all($pattern, $x, $matchesarray);
-
 		if (!$passed) {
 			$this->setStatus(self::STATUS_PAUSED, 'no scenarios in file ' . $f);
 			return array(false, array('no scenarios in file ' . $f));
