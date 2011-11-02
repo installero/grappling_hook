@@ -95,6 +95,7 @@ class Feature extends BaseObjectClass {
 		$recording = false;
 		$error_message = '';
 		$code = self::STATUS_OK;
+		$passed = false;
 		foreach ($output as $line) {
 			if ($recording)
 				$error_message.=$line . "\n";
@@ -111,6 +112,18 @@ class Feature extends BaseObjectClass {
 			if (strstr($line, 'scenario')) {
 				$recording = false;
 			}
+			if (strstr($line, 'scenarios (')) {
+				$passed = true;
+			}
+		}
+
+		$pattern = '/(\d+) scenarios \((\d+) undefined\)/isU';
+		$x = implode("\n", $output);
+		preg_match_all($pattern, $x, $matchesarray);
+
+		if (!$passed) {
+			$this->setStatus(self::STATUS_PAUSED, 'no scenarios in file ' . $f);
+			return array(false, array('no scenarios in file ' . $f));
 		}
 
 		if ($code !== self::STATUS_OK) {
@@ -175,7 +188,7 @@ class Feature extends BaseObjectClass {
 		if ($this->data['description']) {
 			@mkdir('../features/' . $this->getFolder());
 			file_put_contents($f, $this->data['description']);
-			clearstatcache(); 
+			clearstatcache();
 			return $this->data['description'];
 		}
 	}
