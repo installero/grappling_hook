@@ -83,7 +83,7 @@ class Feature extends BaseObjectClass {
 			return array(false, array('no file ' . $f));
 		}
 
-		$file_modify = fileatime($f);
+		$file_modify = filemtime($f);
 		if ($file_modify > $this->getFileModifyTime()) {
 			// file is newer tham db thinks
 			$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $this->id;
@@ -175,6 +175,7 @@ class Feature extends BaseObjectClass {
 		if ($this->data['description']) {
 			@mkdir('../features/' . $this->getFolder());
 			file_put_contents($f, $this->data['description']);
+			clearstatcache(); 
 			return $this->data['description'];
 		}
 	}

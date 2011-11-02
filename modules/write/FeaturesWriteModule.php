@@ -43,24 +43,29 @@ class FeaturesWriteModule extends BaseWriteModule {
 		);
 		if ($data['title'] && $data['id'])
 			Features::getInstance()->getByIdLoaded($data['id'])->_update($data);
+		
 		if ($data['description']) {
 			// пишем в файл
 			$f = '../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
-
 			if (!file_exists($f)) {
 				@mkdir('../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
 				file_put_contents($f, $data['description']);
-				$file_modify = @fileatime($f);
+				$file_modify = @filemtime($f);
+				clearstatcache(); 
 				$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
 				Database::query($query);
 			} else {
-				$file_modify = @fileatime($f);
-				if ($file_modify > Features::getInstance()->getByIdLoaded($data['id'])->getFileModifyTime()) {
+				$file_modify = @filemtime($f);
+				if ($file_modify > Request::post('file_modify')) {
 					// файл новее чем в базе 
-					throw new Exception('File was modified. Please refresh page');
+					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
+					Database::query($query);
+					throw new Exception(date('Y-m-d H:i:s').' File was modified at ' . date('Y-m-d H:i:s', $file_modify) . ', fetched version is ' . date('Y-m-d H:i:s', Request::post('file_modify')) . '. Please refresh page');
 				} else {
 					file_put_contents($f, $data['description']);
-					$file_modify = @fileatime($f);
+					clearstatcache(); 
+					$file_modify = @filemtime($f);
+					clearstatcache(); 
 					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
 					Database::query($query);
 				}

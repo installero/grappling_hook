@@ -18,6 +18,7 @@
 		<form method="post" action="">
 			<input type="hidden" name="writemodule" value="FeaturesWriteModule" />
       <input type="hidden" name="id" value="{@id}" />
+      <input type="hidden" value="{@file_modify}" name="file_modify" />
 			<div class="form-group">
 				<h2>Добавление теста</h2>
         <xsl:apply-templates select="." mode="h-field-input">
@@ -110,7 +111,6 @@
             <input type="hidden" value="run" name="action" />
             <input type="hidden" value="{@id}" name="id" />
 	    <input type="hidden" value="{@file_modify}" name="file_modify" />
-	    
             <input type="submit" value="run" />
           </form>
         </noscript>
