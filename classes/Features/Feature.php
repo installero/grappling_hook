@@ -100,6 +100,12 @@ class Feature extends BaseObjectClass {
 			if ($recording)
 				$error_message.=$line . "\n";
 
+
+			if (strstr($line, 'Failing Scenarios:')) {
+				$recording = true;
+				$code = self::STATUS_FAILED;
+			}
+
 			if (strstr($line, '(::) failed steps (::)')) {
 				$recording = true;
 				$code = self::STATUS_FAILED;
