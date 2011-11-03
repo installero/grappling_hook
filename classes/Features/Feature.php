@@ -179,18 +179,36 @@ class Feature extends BaseObjectClass {
 
 	function getTitle() {
 		$this->load();
-		return $this->data['title'];
+		$t = $this->getDescription();
+		$t = explode("\n", $t);
+		$tt = '';
+		$ttt = '';
+		foreach ($t as $tt) {
+			if ($ttt)
+				continue;
+			if ($tt[0] != '#') {
+				$ttt = $tt;
+			}
+		}
+		$pattern = '/(Feature\:|Функция\:|Функционал\:|Свойство\:)(.+)$/isU';
+		preg_match_all($pattern, $ttt, $matchesarray);
+		return isset($matchesarray[2][0]) && $matchesarray[2][0] ? $matchesarray[2][0] : $this->data['title'];
 	}
 
 	function getDescription() {
 		$this->load();
+		if (isset($this->descr))
+			return$this->descr;
 		$f = '../features/' . $this->getFilePath();
-		if (file_exists($f))
-			return file_get_contents($f);
+		if (file_exists($f)) {
+			$this->descr = file_get_contents($f);
+			return $this->descr;
+		}
 		if ($this->data['description']) {
 			@mkdir('../features/' . $this->getFolder());
 			file_put_contents($f, $this->data['description']);
 			clearstatcache();
+			$this->descr = $this->data['description'];
 			return $this->data['description'];
 		}
 	}
