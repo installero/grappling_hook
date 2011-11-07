@@ -76,7 +76,8 @@ class Feature extends BaseObjectClass {
 
 	function _run() {
 		$this->load();
-		$command = 'cd ../ && bundle exec cucumber -f progress -r features features/' . $this->getFilePath();
+		// bundle exec cuke4php features/authorization/sign_in.feature -r features
+		$command = 'cd ../ && bundle exec cuke4php -f progress features/' . $this->getFilePath() . ' -r features';
 		$f = '../features/' . $this->getFilePath();
 		if (!file_exists($f)) {
 			$this->setStatus(self::STATUS_PAUSED, 'no file ' . $f);
@@ -124,7 +125,7 @@ class Feature extends BaseObjectClass {
 		}
 
 		if (!$passed) {
-			$this->setStatus(self::STATUS_PAUSED, 'no scenarios in file ' . $f);
+			$this->setStatus(self::STATUS_PAUSED, 'no scenarios in file ' . $f . "\n" . implode("\n", $output));
 			return array(false, array('no scenarios in file ' . $f));
 		}
 
@@ -186,12 +187,13 @@ class Feature extends BaseObjectClass {
 		foreach ($t as $tt) {
 			if ($ttt)
 				continue;
-			if ($tt[0] != '#') {
+			if (isset($tt[0]) && $tt[0] != '#'  && $tt[0] != '@') {
 				$ttt = $tt;
 			}
 		}
 		$pattern = '/(Feature\:|Функция\:|Функционал\:|Свойство\:)(.+)$/isU';
 		preg_match_all($pattern, $ttt, $matchesarray);
+//		die(print_r($matchesarray));
 		return isset($matchesarray[2][0]) && $matchesarray[2][0] ? $matchesarray[2][0] : $this->data['title'];
 	}
 
