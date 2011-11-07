@@ -106,6 +106,10 @@ class Feature extends BaseObjectClass {
 				$recording = true;
 				$code = self::STATUS_FAILED;
 			}
+			if (strstr($line, 'You can implement')) {
+				$recording = true;
+				$code = self::STATUS_FAILED;
+			}
 
 			if (strstr($line, '(::) failed steps (::)')) {
 				$recording = true;
@@ -120,6 +124,9 @@ class Feature extends BaseObjectClass {
 				$recording = false;
 			}
 			if (strstr($line, 'scenarios (')) {
+				$passed = true;
+			}
+			if (strstr($line, 'scenario (')) {
 				$passed = true;
 			}
 		}
@@ -187,7 +194,7 @@ class Feature extends BaseObjectClass {
 		foreach ($t as $tt) {
 			if ($ttt)
 				continue;
-			if (isset($tt[0]) && $tt[0] != '#'  && $tt[0] != '@') {
+			if (isset($tt[0]) && $tt[0] != '#' && $tt[0] != '@') {
 				$ttt = $tt;
 			}
 		}
