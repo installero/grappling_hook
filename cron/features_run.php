@@ -14,7 +14,7 @@ echo Config::need('base_path');
 
 require 'include.php';
 $test_delay = 1;
-$test_delay_normal = 1800;
+$test_delay_normal = 8 * 3600;
 $failed_cnt = 0;
 $max_failed_cnt = 100;
 $lockfile = 'cron/features_run.lock';

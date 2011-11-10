@@ -119,6 +119,11 @@ class Feature extends BaseObjectClass {
 				$code = self::STATUS_NO_FILE;
 				$recording = true;
 			}
+			
+			if (strstr($line, ' undefined)')) {
+				$code = self::STATUS_NO_FILE;
+				$recording = true;
+			}
 
 			if (strstr($line, 'scenario')) {
 				$recording = false;
