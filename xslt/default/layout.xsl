@@ -12,6 +12,9 @@
       var exec_url ='<xsl:value-of select="&prefix;"/>';
       var user_role = '<xsl:value-of select="&current_profile;/@role"/>';
     </script>
+    <link rel="icon" 
+      type="image/png" 
+      href="{&prefix;}static/default/img/favicon.png"/>
     <xsl:apply-templates select="&structure;/data/stylesheet" mode="h-stylesheet"/>
     <xsl:apply-templates select="&structure;/data/javascript" mode="h-javascript"/>
 	</xsl:template>
