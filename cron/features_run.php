@@ -30,7 +30,7 @@ function lock_active() {
 }
 
 $last_active = (int) file_get_contents($lockfile);
-if (time() - $last_active > $test_delay) {
+if (time() - $last_active > 60) {
 	while (true) {
 		lock_active();
 		work();
