@@ -33,7 +33,7 @@ class CurrentUser extends User {
 	public function getNewMessagesCount() {
 		$cacheName = 'messages_count_' . $this->id;
 		if (!isset($this->new_messages_count)) {
-			if (($this->new_messages_count = Cache::get($cacheName)) === false) {
+			if (($this->new_messages_count = Cache::get($cacheName)) === null) {
 				$query = 'SELECT COUNT(1) FROM `users_messages_index` WHERE `id_recipient`=' . $this->id . ' AND `is_new`=1';
 				$this->new_messages_count = Database::sql2single($query);
 				Cache::set($cacheName, (int) $this->new_messages_count, $this->new_messages_cachetime);

@@ -19,7 +19,9 @@ class Feature extends BaseObjectClass {
 	    'filepath' => 'string',
 	    'last_run' => 'int',
 	    'status' => 'int',
-	    'last_message' => 'html'
+	    'last_message' => 'html',
+	    'db_modify' => 'int',
+	    'file_modify' => 'int',
 	);
 
 	function __construct($id, $data = false) {
@@ -62,22 +64,52 @@ class Feature extends BaseObjectClass {
 		Database::query($query);
 	}
 
+	function getFileModifyTime() {
+		$this->load();
+		return (int) $this->data['file_modify'];
+	}
+
+	function getDbModifyTime() {
+		$this->load();
+		return (int) $this->data['db_modify'];
+	}
+
 	function _run() {
 		$this->load();
-		$command = 'cd ../ && bundle exec cucumber -f progress -r features features/' . $this->getFilePath();
+		// bundle exec cuke4php features/authorization/sign_in.feature -r features
+		$command = 'cd ../ && bundle exec cuke4php -f progress features/' . $this->getFilePath() . ' -r features';
 		$f = '../features/' . $this->getFilePath();
 		if (!file_exists($f)) {
-			$this->setStatus(self::STATUS_NO_FILE, 'no file ' . $f);
+			$this->setStatus(self::STATUS_PAUSED, 'no file ' . $f);
 			return array(false, array('no file ' . $f));
 		}
+
+		$file_modify = filemtime($f);
+		if ($file_modify > $this->getFileModifyTime()) {
+			// file is newer tham db thinks
+			$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $this->id;
+			Database::query($query);
+		}
+
 		exec($command, $output, $return_var);
 		file_put_contents('log/cucumber.log', implode("\n", $output));
 		$recording = false;
 		$error_message = '';
 		$code = self::STATUS_OK;
+		$passed = false;
 		foreach ($output as $line) {
 			if ($recording)
 				$error_message.=$line . "\n";
+
+
+			if (strstr($line, 'Failing Scenarios:')) {
+				$recording = true;
+				$code = self::STATUS_FAILED;
+			}
+			if (strstr($line, 'You can implement')) {
+				$recording = true;
+				$code = self::STATUS_FAILED;
+			}
 
 			if (strstr($line, '(::) failed steps (::)')) {
 				$recording = true;
@@ -87,10 +119,26 @@ class Feature extends BaseObjectClass {
 				$code = self::STATUS_NO_FILE;
 				$recording = true;
 			}
+			
+			if (strstr($line, ' undefined)')) {
+				$code = self::STATUS_NO_FILE;
+				$recording = true;
+			}
 
 			if (strstr($line, 'scenario')) {
 				$recording = false;
 			}
+			if (strstr($line, 'scenarios (')) {
+				$passed = true;
+			}
+			if (strstr($line, 'scenario (')) {
+				$passed = true;
+			}
+		}
+
+		if (!$passed) {
+			$this->setStatus(self::STATUS_PAUSED, 'no scenarios in file ' . $f . "\n" . implode("\n", $output));
+			return array(false, array('no scenarios in file ' . $f));
 		}
 
 		if ($code !== self::STATUS_OK) {
@@ -134,21 +182,49 @@ class Feature extends BaseObjectClass {
 		    'status_description' => $this->getStatusDescription(),
 		    'group_id' => $this->getGroupId(),
 		    'filepath' => $this->getFileName(),
-		    'last_run' => ($last_run = $this->getLastRun()) ? date('Y/m/d H:i', $last_run) : 0,
+		    'last_run' => ($last_run = $this->getLastRun()) ? date('Y/m/d H:i:s', $last_run) : 0,
 		    'last_message' => $this->getLastMessage(),
 		    'path' => $this->getUrl(),
+		    'file_modify' => $this->getFileModifyTime(),
 		);
 		return $out;
 	}
 
 	function getTitle() {
 		$this->load();
-		return $this->data['title'];
+		$t = $this->getDescription();
+		$t = explode("\n", $t);
+		$tt = '';
+		$ttt = '';
+		foreach ($t as $tt) {
+			if ($ttt)
+				continue;
+			if (isset($tt[0]) && $tt[0] != '#' && $tt[0] != '@') {
+				$ttt = $tt;
+			}
+		}
+		$pattern = '/(Feature\:|Функция\:|Функционал\:|Свойство\:)(.+)$/isU';
+		preg_match_all($pattern, $ttt, $matchesarray);
+//		die(print_r($matchesarray));
+		return isset($matchesarray[2][0]) && $matchesarray[2][0] ? $matchesarray[2][0] : $this->data['title'];
 	}
 
 	function getDescription() {
 		$this->load();
-		return $this->data['description'];
+		if (isset($this->descr))
+			return$this->descr;
+		$f = '../features/' . $this->getFilePath();
+		if (file_exists($f)) {
+			$this->descr = file_get_contents($f);
+			return $this->descr;
+		}
+		if ($this->data['description']) {
+			@mkdir('../features/' . $this->getFolder());
+			file_put_contents($f, $this->data['description']);
+			clearstatcache();
+			$this->descr = $this->data['description'];
+			return $this->data['description'];
+		}
 	}
 
 	function getStatus() {
@@ -169,14 +245,11 @@ class Feature extends BaseObjectClass {
 			case self::STATUS_FAILED:
 				return 'failed';
 				break;
-			case self::STATUS_NO_FILE:
-				return 'no_file';
-				break;
-			case self::STATUS_PAUSED:
+			case self::STATUS_PAUSED:case self::STATUS_NO_FILE:
 				return 'paused';
 				break;
 			case self::STATUS_WAIT_FOR_RUN:
-				return 'wait_for_run';
+				return 'waiting';
 				break;
 		}
 		return 'unknown';

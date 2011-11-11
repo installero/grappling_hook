@@ -14,10 +14,10 @@ echo Config::need('base_path');
 
 require 'include.php';
 $test_delay = 1;
-$test_delay_normal = 8 * 3600;
+$test_delay_normal = 1800;
 $failed_cnt = 0;
 $max_failed_cnt = 100;
-$lockfile = 'cron/features_run.lock';
+$lockfile = 'cron/features_failed.lock';
 
 function _log($s) {
 	echo time() . ' ' . $s . "\n";
@@ -43,7 +43,7 @@ if (time() - $last_active > $test_delay) {
 function work() {
 	global $test_delay, $test_delay_normal, $failed_cnt, $max_failed_cnt;
 	$query = 'SELECT `id` FROM `features` WHERE 
-		(`last_run`<(' . (time() - $test_delay_normal) . ') AND (`status`=' . Feature::STATUS_OK . ' OR `status`=' . Feature::STATUS_NEW . '))
+		(`status`=' . Feature::STATUS_FAILED . ' AND `last_run`<(' . (time() - 10) . '))
 		ORDER BY `last_run`';
 
 	$arr = Database::sql2array($query, 'id');
