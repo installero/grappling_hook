@@ -148,7 +148,7 @@ class users_module extends BaseModule {
 		$this->data['profile']['role'] = $user->getRole();
 		$this->data['profile']['lang'] = $user->getLanguage();
 		$this->data['profile']['city_id'] = $user->getProperty('city_id');
-		$this->data['profile']['city'] = Database::sql2single('SELECT `name` FROM `lib_city` WHERE `id`=' . (int) $user->getProperty('city_id'));
+		//$this->data['profile']['city'] = Database::sql2single('SELECT `name` FROM `lib_city` WHERE `id`=' . (int) $user->getProperty('city_id'));
 		$this->data['profile']['picture'] = $user->getAvatar();
 		$this->data['profile']['rolename'] = $user->getRoleName();
 		$this->data['profile']['bday'] = $user->getBday(date('d-m-Y'), 'd-m-Y');

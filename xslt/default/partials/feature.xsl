@@ -18,6 +18,7 @@
 		<form method="post" action="">
 			<input type="hidden" name="writemodule" value="FeaturesWriteModule" />
       <input type="hidden" name="id" value="{@id}" />
+      <input type="hidden" value="{@file_modify}" name="file_modify" />
 			<div class="form-group">
 				<h2>Добавление теста</h2>
         <xsl:apply-templates select="." mode="h-field-input">
@@ -102,12 +103,14 @@
         </xsl:call-template>
 			</td>
 			<td class="p-feature-control">
-        <a href="#" class="run-feature">Запустить</a>
+        <a href="#" class="pause-feature">=</a>
+        <a href="#" class="run-feature">→</a>
         <noscript>
           <form method="post">
             <input type="hidden" value="FeaturesWriteModule" name="writemodule" />
             <input type="hidden" value="run" name="action" />
             <input type="hidden" value="{@id}" name="id" />
+	    <input type="hidden" value="{@file_modify}" name="file_modify" />
             <input type="submit" value="run" />
           </form>
         </noscript>
@@ -117,17 +120,9 @@
 
 	<xsl:template match="*" mode="p-feature-item">
 		<tr>
-			<td>
-				<a href="{@path}">
-					<xsl:value-of select="@title" />
-				</a>
-			</td>
-			<td>
-				<xsl:value-of select="@status" />
-			</td>
-			<td>
-				<xsl:value-of select="@filepath" />
-			</td>
+			<td><a href="{@path}"><xsl:value-of select="@title"/></a></td>
+			<td><xsl:value-of select="@status"/></td>
+			<td><xsl:value-of select="@filepath"/></td>
 			<td>
         <xsl:call-template name="helpers-abbr-time">
           <xsl:with-param select="@last_run" name="time"/>
@@ -136,7 +131,9 @@
 		</tr>
 		<div>
 			<h3>описание теста</h3>
+			<pre>
 			<xsl:value-of select="@description" disable-output-escaping="yes"/>
+			</pre>
 		</div>
 		<div>
 			<h3>последний результат тестирования</h3>

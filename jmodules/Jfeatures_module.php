@@ -9,6 +9,9 @@ class Jfeatures_module extends JBaseModule {
 			case 'run':
 				$this->runTest();
 				break;
+			case 'pause':
+				$this->pauseTest();
+				break;
 			case 'check':
 				$this->checkTest();
 				break;
@@ -63,7 +66,7 @@ class Jfeatures_module extends JBaseModule {
 			$this->error('Auth');
 			return;
 		}
-
+		/* @var $current_user CurrentUser */
 		if ($current_user->getRole() < User::ROLE_SITE_ADMIN) {
 			$this->error('Must be admin');
 			return;
@@ -77,17 +80,51 @@ class Jfeatures_module extends JBaseModule {
 
 		$feature = Features::getInstance()->getByIdLoaded($id);
 		/* @var $feature Feature */
-		try {
-			list($success, $description) = $feature->_run();
-		} catch (Exception $e) {
-			$this->error($e->getMessage());
-		}
-
+		
+		$feature->setStatus(Feature::STATUS_WAIT_FOR_RUN, 'RUN FROM WEB INTERFACE BY ' . $current_user->getNickName());
+		usleep(10000);
+		$feature = Features::getInstance()->getByIdLoaded($id);
+		$feature->loaded = false;
 		$this->data = array(
 		    'id' => $id,
 		    'status_description' => $feature->getStatusDescription(),
 		    'last_run' => date('Y/m/d H:i', $feature->getLastRun()),
-		    'last_message' => implode("\n", $description),
+		    'last_message' => 'waiting for run',
+		    'success' => 1
+		);
+	}
+	
+	function pauseTest() {
+		global $current_user;
+		$this->data['success'] = 0;
+		if (!$current_user->authorized) {
+			$this->error('Auth');
+			return;
+		}
+		/* @var $current_user CurrentUser */
+		if ($current_user->getRole() < User::ROLE_SITE_ADMIN) {
+			$this->error('Must be admin');
+			return;
+		}
+
+		$id = isset($_POST['id']) ? (int) $_POST['id'] : false;
+		if (!$id) {
+			$this->error('Illegal id');
+			return;
+		}
+
+		$feature = Features::getInstance()->getByIdLoaded($id);
+		/* @var $feature Feature */
+		
+		$feature->setStatus(Feature::STATUS_PAUSED, 'PAUSED FROM WEB INTERFACE BY ' . $current_user->getNickName());
+		usleep(10000);
+		$feature = Features::getInstance()->getByIdLoaded($id);
+		$feature->loaded = false;
+		$this->data = array(
+		    'id' => $id,
+		    'status_description' => $feature->getStatusDescription(),
+		    'last_run' => date('Y/m/d H:i', $feature->getLastRun()),
+		    'last_message' => 'waiting for run',
 		    'success' => 1
 		);
 	}
