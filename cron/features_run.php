@@ -83,7 +83,7 @@ function work() {
 		_log('no features to process');
 		sleep($test_delay);
 		$failed_cnt++;
-	}
+	}else $failed_cnt=0;
 
 	if ($max_failed_cnt < $failed_cnt) {
 		_log('nothing to test count ' . $failed_cnt);
