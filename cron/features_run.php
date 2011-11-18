@@ -23,6 +23,24 @@ function _log($s) {
 	echo time() . ' ' . $s . "\n";
 }
 
+$start = 0;
+$end = 0;
+
+function _log_start() {
+	global $start;
+	$start = time();
+}
+
+function _log_end($featurename, $last_run) {
+	global $start;
+	$end = time();
+	$query = 'INSERT INTO `cron_log` SET `start`=' . $start . ', `end`=' . $end . ', `feature`=' . Database::escape($featurename) . ',`feature_state_change`=' . $last_run;
+	Database::query($query);
+}
+
+_log_start();
+_log_end('start', time());
+
 function lock_active() {
 	global $lockfile;
 	_log('lock');
@@ -30,7 +48,7 @@ function lock_active() {
 }
 
 $last_active = (int) file_get_contents($lockfile);
-if (time() - $last_active > 60) {
+if (time() - $last_active > 30) {
 	while (true) {
 		lock_active();
 		work();
@@ -54,7 +72,10 @@ function work() {
 		/* @var $feature Feature */
 		lock_active();
 		$feature->dropCache();
+		_log_start();
+		$lr = $feature->data['last_run'];
 		$feature->_run();
+		_log_end($feature->getFilePath(), $lr);
 		_log($feature->getFilePath());
 	}
 	lock_active();
@@ -66,6 +87,8 @@ function work() {
 
 	if ($max_failed_cnt < $failed_cnt) {
 		_log('nothing to test count ' . $failed_cnt);
+		_log_start();
+		_log_end('die', time());
 		die();
 	}
 }
