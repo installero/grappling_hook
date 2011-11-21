@@ -53,12 +53,12 @@ class FeaturesWriteModule extends BaseWriteModule {
 			if (!file_exists($f)) {
 				@mkdir('../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
 				file_put_contents($f, $data['description']);
-				$file_modify = @filemtime($f);
+				$file_modify = (int) @filemtime($f);
 				clearstatcache();
 				$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
 				Database::query($query);
 			} else {
-				$file_modify = @filemtime($f);
+				$file_modify = (int) @filemtime($f);
 				if ($file_modify > Request::post('file_modify')) {
 					// файл новее чем в базе 
 					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
@@ -67,7 +67,7 @@ class FeaturesWriteModule extends BaseWriteModule {
 				} else {
 					file_put_contents($f, $data['description']);
 					clearstatcache();
-					$file_modify = @filemtime($f);
+					$file_modify = (int) @filemtime($f);
 					clearstatcache();
 					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
 					Database::query($query);

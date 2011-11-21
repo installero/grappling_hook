@@ -16,7 +16,7 @@ require 'include.php';
 $test_delay = 1;
 $test_delay_normal = 8 * 3600;
 $failed_cnt = 0;
-$max_failed_cnt = 100;
+$max_failed_cnt = 3600;
 $lockfile = 'cron/features_run.lock';
 
 function _log($s) {
@@ -38,9 +38,6 @@ function _log_end($featurename, $last_run) {
 	Database::query($query);
 }
 
-_log_start();
-_log_end('start', time());
-
 function lock_active() {
 	global $lockfile;
 	_log('lock');
@@ -49,6 +46,8 @@ function lock_active() {
 
 $last_active = (int) file_get_contents($lockfile);
 if (time() - $last_active > 30) {
+	_log_start();
+	_log_end('start', time());
 	while (true) {
 		lock_active();
 		work();
@@ -83,7 +82,8 @@ function work() {
 		_log('no features to process');
 		sleep($test_delay);
 		$failed_cnt++;
-	}else $failed_cnt=0;
+	}else
+		$failed_cnt = 0;
 
 	if ($max_failed_cnt < $failed_cnt) {
 		_log('nothing to test count ' . $failed_cnt);
