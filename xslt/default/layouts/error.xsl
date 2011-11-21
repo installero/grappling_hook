@@ -6,6 +6,7 @@
 	<xsl:output indent="yes"/>
 	<xsl:include href="../layout.xsl" />
 	<xsl:include href="../module.xsl"/>
+	<xsl:include href="../partials/user.xsl"/>
 	<xsl:include href="../helpers.xsl" />
 
 	<xsl:template match="module[@error and @action='show']" mode="p-module">
