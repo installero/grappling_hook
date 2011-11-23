@@ -25,6 +25,7 @@ function _log($s) {
 
 $start = 0;
 $end = 0;
+$last_lock = 0;
 
 function _log_start() {
 	global $start;
@@ -39,9 +40,18 @@ function _log_end($featurename, $last_run) {
 }
 
 function lock_active() {
-	global $lockfile;
+	global $lockfile, $last_lock;
 	_log('lock');
-	file_put_contents($lockfile, time());
+	$last_lock_file = file_get_contents($lockfile);
+	// писали в файл, и все сходится
+	if ($last_lock && ($last_lock == $last_lock_file)) {
+		$last_lock = time();
+	} else if ($last_lock) {
+		// кто-то пишет в файл кроме нас!
+		die('another demon - lock');
+	}else// начинаем писать в лок файл
+		$last_lock = time();
+	file_put_contents($lockfile, $last_lock);
 }
 
 $last_active = (int) file_get_contents($lockfile);
