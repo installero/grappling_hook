@@ -23,6 +23,8 @@ function _log($s) {
 	echo time() . ' ' . $s . "\n";
 }
 
+$gid = rand(0, 100500);
+
 $start = 0;
 $end = 0;
 $last_lock = 0;
@@ -33,9 +35,9 @@ function _log_start() {
 }
 
 function _log_end($featurename, $last_run) {
-	global $start;
+	global $start , $gid;
 	$end = time();
-	$query = 'INSERT INTO `cron_log` SET `start`=' . $start . ', `end`=' . $end . ', `feature`=' . Database::escape($featurename) . ',`feature_state_change`=' . $last_run;
+	$query = 'INSERT INTO `cron_log` SET `cronid`='.((int)$gid).',`start`=' . $start . ', `end`=' . $end . ', `feature`=' . Database::escape($featurename) . ',`feature_state_change`=' . $last_run;
 	Database::query($query);
 }
 
@@ -48,6 +50,8 @@ function lock_active() {
 		$last_lock = time();
 	} else if ($last_lock) {
 		// кто-то пишет в файл кроме нас!
+		_log_start();
+		_log_end('another demon - lock', time());
 		die('another demon - lock');
 	}else// начинаем писать в лок файл
 		$last_lock = time();
@@ -63,7 +67,8 @@ if (time() - $last_active > 30) {
 		work();
 	}
 } else {
-	file_put_contents($lockfile, 0);
+	_log_start();
+	_log_end('another demon', time());
 	die('another demon');
 }
 
