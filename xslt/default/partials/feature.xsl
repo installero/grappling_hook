@@ -70,6 +70,7 @@
           <em class="p-feature-group-edit"><a href="{@path_edit}">ред.</a></em>
           <em class="p-feature-group-delete"><a href="#">x</a></em>
         </xsl:if>
+        <em class="p-feature-group-run"><a href="#" title='Запустить все тесты из группы'>&rarr;</a></em>
       </h2>
       <table class="p-feature-group-table">
         <xsl:apply-templates select="features" mode="p-feature-list" />		

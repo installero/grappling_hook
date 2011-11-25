@@ -11,8 +11,8 @@ var checkStatuses = function (feature_class) {
 
     var jqxhr = $.post(exec_url, post_params, function(data){
       if (data && data.success){updateFeature(tr,tr_class,data);}
-      else if (data && data.error){alert(data.error);}
-      else{alert(default_error_message);}
+      else if (data && data.error){showMessage(data.error);}
+      else{showMessage(default_error_message);}
     }, "json");
 
   });
@@ -33,8 +33,8 @@ var runFeature = function(element){
   var jqxhr = $.post(exec_url, post_params, function(data){
     if (data && data.success){
       updateFeature(tr,tr_class,data)
-    } else if (data && data.error){alert(data.error);}
-    else{alert(default_error_message);}
+    } else if (data && data.error){showMessage(data.error);}
+    else{showMessage(default_error_message);}
   }, "json");
 
   jqxhr.complete(function(){ element.html('→'); });
@@ -55,8 +55,8 @@ var pauseFeature = function(element){
   var jqxhr = $.post(exec_url, post_params, function(data){
     if (data && data.success){
       updateFeature(tr,tr_class,data)
-    } else if (data && data.error){alert(data.error);}
-    else{alert(default_error_message);}
+    } else if (data && data.error){showMessage(data.error);}
+    else{showMessage(default_error_message);}
   }, "json");
 
   jqxhr.complete(function(){ element.html('='); });
@@ -71,8 +71,8 @@ var deleteFeature = function(id, element){
 
     $.post(exec_url, post_params, function(data){
       if(data && data.success){element.fadeOut(500);}
-      else if (data && data.error){alert(data.error);}
-      else{alert(default_error_message);}
+      else if (data && data.error){showMessage(data.error);}
+      else{showMessage(default_error_message);}
     }, "json");
 }
 
@@ -85,8 +85,8 @@ var deleteGroup = function (id, element) {
 
     $.post(exec_url, post_params, function(data){
       if(data && data.success){element.fadeOut(500);}
-      else if(data && data.error){alert(data.error);}
-      else{alert(default_error_message);}
+      else if(data && data.error){showMessage(data.error);}
+      else{showMessage(default_error_message);}
     }, "json");
 }
 
@@ -129,9 +129,14 @@ $(function() {
 
   $('.p-feature-description').hide();
 
-  $('.p-feature-group-show').bind('click',function(){
-    $(this).parent().next('.p-feature-group-table').toggle(); return false;
+  $('.p-feature-group-run a ').click(function(){
+    $(this).parents('.p-feature-group').find('.run-feature').each(function(s,index){
+      runFeature($(this))
+    });
+    return false;
   });
+
+  $('')
 });
 
 var updateFeature = function (tr,tr_class,data){

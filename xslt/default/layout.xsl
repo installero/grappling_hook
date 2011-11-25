@@ -29,6 +29,9 @@
 			</div>
 			<div class="l-wrapper">
 				<div class="l-content">
+          <div class="l-message">
+            <div class="module"><div class="form-error"/></div>
+          </div>
 					<xsl:apply-templates select="&structure;/blocks/content/module" mode="l-content"/>
 				</div>
 			</div>
