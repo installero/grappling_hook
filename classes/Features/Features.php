@@ -14,11 +14,14 @@ class Features extends Collection {
 		return self::$features_instance;
 	}
 
-	public function _create($data) {
+	public function _create($data, $redirect = true) {
 		$item = new $this->className(0);
 		$createdId = $item->_create($data);
-		header('Location:' . Config::need('www_path') . '/features/' . $createdId);
-		exit();
+		if ($redirect) {
+			header('Location:' . Config::need('www_path') . '/features/' . $createdId);
+			exit();
+		}
+		return $createdId;
 	}
 
 }

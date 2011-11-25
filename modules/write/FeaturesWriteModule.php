@@ -26,9 +26,38 @@ class FeaturesWriteModule extends BaseWriteModule {
 		    'last_message' => '',
 		);
 		if ($data['title'])
-			Features::getInstance()->_create($data);
+			$data['id'] = Features::getInstance()->_create($data, false);
 		@ob_end_clean();
-		header('Location: ' . Config::need('www_path') . '/features');
+
+		if (1 || $data['description']) {
+			// пишем в файл
+			$f = '../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
+			if (!file_exists($f)) {
+				@mkdir('../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
+				file_put_contents($f, $data['description']);
+				$file_modify = (int) @filemtime($f);
+				clearstatcache();
+				$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
+				Database::query($query);
+			} else {
+				$file_modify = (int) @filemtime($f);
+				if ($file_modify > Request::post('file_modify')) {
+					// файл новее чем в базе 
+					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
+					Database::query($query);
+					throw new Exception(date('Y-m-d H:i:s') . ' File was modified at ' . date('Y-m-d H:i:s', $file_modify) . ', fetched version is ' . date('Y-m-d H:i:s', Request::post('file_modify')) . '. Please refresh page');
+				} else {
+					file_put_contents($f, $data['description']);
+					clearstatcache();
+					$file_modify = (int) @filemtime($f);
+					clearstatcache();
+					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
+					Database::query($query);
+				}
+			}
+		}
+
+		header('Location:' . Config::need('www_path') . '/features/' . $data['id']);
 		exit(0);
 	}
 
@@ -41,24 +70,35 @@ class FeaturesWriteModule extends BaseWriteModule {
 		    'group_id' => isset(Request::$post['group_id']) ? (int) Request::$post['group_id'] : false,
 		    'db_modify' => time(),
 		);
+		
+		$oldf = Features::getInstance()->getByIdLoaded($data['id']);
+		/*@var $oldf Feature*/
+		
+		$old_group = $oldf->data['group_id'];
+		$new_group = $data['group_id'];
+		
+		$source= Config::need('base_path').'../features/'.$oldf->getFilePath();
+			$query = 'SELECT `folder` FROM `feature_groups` WHERE `id`=' . $new_group;
+			$new_folder = Database::sql2single($query);
+			$dest = Config::need('base_path').'../features/'.$new_folder . '/' . $oldf->data['filepath'] . '.feature';
 
 		$data['description'] = str_replace("\r\n", "\n", $data['description']);
 
 		if ($data['title'] && $data['id'])
 			Features::getInstance()->getByIdLoaded($data['id'])->_update($data);
 
-		if ($data['description']) {
+		if (1 || $data['description']) {
 			// пишем в файл
 			$f = '../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
 			if (!file_exists($f)) {
 				@mkdir('../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
 				file_put_contents($f, $data['description']);
-				$file_modify = @filemtime($f);
+				$file_modify = (int) @filemtime($f);
 				clearstatcache();
 				$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
 				Database::query($query);
 			} else {
-				$file_modify = @filemtime($f);
+				$file_modify = (int) @filemtime($f);
 				if ($file_modify > Request::post('file_modify')) {
 					// файл новее чем в базе 
 					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
@@ -67,12 +107,20 @@ class FeaturesWriteModule extends BaseWriteModule {
 				} else {
 					file_put_contents($f, $data['description']);
 					clearstatcache();
-					$file_modify = @filemtime($f);
+					$file_modify = (int) @filemtime($f);
 					clearstatcache();
 					$query = 'UPDATE `features` SET `file_modify` = ' . $file_modify . ' WHERE `id`=' . $data['id'];
 					Database::query($query);
 				}
 			}
+		}
+		
+		if($old_group != $new_group){
+			// move to another folder
+			
+			copy($source, $dest);
+			unlink($source);
+			Features::getInstance()->dropCache($oldf->id);
 		}
 
 		@ob_end_clean();
