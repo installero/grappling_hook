@@ -70,6 +70,17 @@ class FeaturesWriteModule extends BaseWriteModule {
 		    'group_id' => isset(Request::$post['group_id']) ? (int) Request::$post['group_id'] : false,
 		    'db_modify' => time(),
 		);
+		
+		$oldf = Features::getInstance()->getByIdLoaded($data['id']);
+		/*@var $oldf Feature*/
+		
+		$old_group = $oldf->data['group_id'];
+		$new_group = $data['group_id'];
+		
+		$source= Config::need('base_path').'../features/'.$oldf->getFilePath();
+			$query = 'SELECT `folder` FROM `feature_groups` WHERE `id`=' . $new_group;
+			$new_folder = Database::sql2single($query);
+			$dest = Config::need('base_path').'../features/'.$new_folder . '/' . $oldf->data['filepath'] . '.feature';
 
 		$data['description'] = str_replace("\r\n", "\n", $data['description']);
 
@@ -102,6 +113,14 @@ class FeaturesWriteModule extends BaseWriteModule {
 					Database::query($query);
 				}
 			}
+		}
+		
+		if($old_group != $new_group){
+			// move to another folder
+			
+			copy($source, $dest);
+			unlink($source);
+			Features::getInstance()->dropCache($oldf->id);
 		}
 
 		@ob_end_clean();
