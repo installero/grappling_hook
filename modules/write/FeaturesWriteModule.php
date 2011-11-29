@@ -31,9 +31,9 @@ class FeaturesWriteModule extends BaseWriteModule {
 
 		if (1 || $data['description']) {
 			// пишем в файл
-			$f = '../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
+			$f = Config::need('features_path').'../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
 			if (!file_exists($f)) {
-				@mkdir('../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
+				@mkdir(Config::need('features_path').'../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
 				file_put_contents($f, $data['description']);
 				$file_modify = (int) @filemtime($f);
 				clearstatcache();
@@ -77,10 +77,10 @@ class FeaturesWriteModule extends BaseWriteModule {
 		$old_group = $oldf->data['group_id'];
 		$new_group = $data['group_id'];
 		
-		$source= Config::need('base_path').'../features/'.$oldf->getFilePath();
+		$source= Config::need('features_path').'../features/'.$oldf->getFilePath();
 			$query = 'SELECT `folder` FROM `feature_groups` WHERE `id`=' . $new_group;
 			$new_folder = Database::sql2single($query);
-			$dest = Config::need('base_path').'../features/'.$new_folder . '/' . $oldf->data['filepath'] . '.feature';
+			$dest = Config::need('features_path').'../features/'.$new_folder . '/' . $oldf->data['filepath'] . '.feature';
 
 		$data['description'] = str_replace("\r\n", "\n", $data['description']);
 
@@ -89,9 +89,9 @@ class FeaturesWriteModule extends BaseWriteModule {
 
 		if (1 || $data['description']) {
 			// пишем в файл
-			$f = '../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
+			$f = Config::need('features_path').'../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFilePath();
 			if (!file_exists($f)) {
-				@mkdir('../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
+				@mkdir(Config::need('features_path').'../features/' . Features::getInstance()->getByIdLoaded($data['id'])->getFolder());
 				file_put_contents($f, $data['description']);
 				$file_modify = (int) @filemtime($f);
 				clearstatcache();
