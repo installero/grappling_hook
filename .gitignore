@@ -4,3 +4,6 @@
 .settings/
 *.lock
 cache
+.rvmrc
+ls2
+config
