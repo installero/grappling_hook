@@ -127,6 +127,10 @@ $(function() {
     $(this).nextAll('.p-feature-description').toggle(); return false;
   });
 
+  $('.p-feature-group-show').bind('click',function(){
+    $(this).parent().next('.p-feature-group-table').toggle(); return false;
+  });
+
   $('.p-feature-description').hide();
 
   $('.p-feature-group-run a ').click(function(){
