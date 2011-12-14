@@ -11,6 +11,7 @@ class FeaturesWriteModule extends BaseWriteModule {
 				$this->_new();
 				break;
 		}
+		exec('chmod -R g+w '.Config::need('features_path').'../features/');
 	}
 
 	function _new() {
