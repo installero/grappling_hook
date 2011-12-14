@@ -1,7 +1,10 @@
 *.swp
-/localconfig.php
+localconfig.php
 .project
-.settings/
+.settings
 *.lock
 cache
 static/upload/avatars
+.rvmrc
+ls2
+config

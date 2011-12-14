@@ -77,12 +77,16 @@ class Feature extends BaseObjectClass {
 	function _run() {
 		$this->load();
 		// bundle exec cuke4php features/authorization/sign_in.feature -r features
-		$command = 'cd ../ && bundle exec cuke4php -f progress features/' . $this->getFilePath() . ' -r features';
-		$f = '../features/' . $this->getFilePath();
+		
+		$command = 'cd '.Config::need('features_path').'../ &&  xvfb-run bundle exec cuke4php -f progress features/' . $this->getFilePath() . ' -r features';
+		echo $command."\n";
+		$f = Config::need('features_path') . $this->getFilePath();
 		if (!file_exists($f)) {
 			$this->setStatus(self::STATUS_PAUSED, 'no file ' . $f);
 			return array(false, array('no file ' . $f));
 		}
+		$com = 'cd '.Config::need('features_path').'../ && echo "Running '.$f.' with Ruby $(ruby -v)" >> ruby_version.log';
+		exec($com);
 
 		$file_modify = filemtime($f);
 		if ($file_modify > $this->getFileModifyTime()) {
@@ -92,7 +96,7 @@ class Feature extends BaseObjectClass {
 		}
 
 		exec($command, $output, $return_var);
-		file_put_contents('log/cucumber.log', implode("\n", $output));
+		@file_put_contents('log/cucumber.log', implode("\n", $output));
 		$recording = false;
 		$error_message = '';
 		$code = self::STATUS_OK;
@@ -213,13 +217,13 @@ class Feature extends BaseObjectClass {
 		$this->load();
 		if (isset($this->descr))
 			return$this->descr;
-		$f = '../features/' . $this->getFilePath();
+		$f = Config::need('features_path').'../features/' . $this->getFilePath();
 		if (file_exists($f)) {
 			$this->descr = file_get_contents($f);
 			return $this->descr;
 		}
 		if ($this->data['description']) {
-			@mkdir('../features/' . $this->getFolder());
+			@mkdir(Config::need('features_path').'../features/' . $this->getFolder());
 			file_put_contents($f, $this->data['description']);
 			clearstatcache();
 			$this->descr = $this->data['description'];
