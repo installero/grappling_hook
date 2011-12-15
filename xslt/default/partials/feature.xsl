@@ -29,6 +29,7 @@
 					<label>Группа</label>
           <select name="group_id">
             <xsl:apply-templates select="$groups/item" mode="p-feature-group-option">
+              <xsl:sort select="@title" lang="ru" data-type="text" order="ascending" case-order="upper-first"/>
               <xsl:with-param select="@group_id" name="group_id"/>
             </xsl:apply-templates>
           </select>
@@ -60,7 +61,7 @@
 	<xsl:template match="*" mode="p-feature-groups">
     <xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
 	</xsl:template>
-	
+
 	<xsl:template match="*" mode="p-feature-group-list-item">
     <div class="p-feature-group" id="{@id}">
       <h2 class="p-feature-group-title">
@@ -73,7 +74,7 @@
         <em class="p-feature-group-run"><a href="#" title='Запустить все тесты из группы'>&rarr;</a></em>
       </h2>
       <table class="p-feature-group-table">
-        <xsl:apply-templates select="features" mode="p-feature-list" />		
+        <xsl:apply-templates select="features" mode="p-feature-list" />
       </table>
     </div>
 	</xsl:template>
