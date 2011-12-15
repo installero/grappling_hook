@@ -97,15 +97,15 @@ $(function() {
     runFeature($(this))
     return false;
   });
-  
+
   $('.pause-feature').bind('click',function(){
     pauseFeature($(this))
     return false;
   });
 
-  setInterval(function(){checkStatuses('waiting');},1000);
-  setInterval(function(){checkStatuses('failed');},3000);
-  setInterval(function(){checkStatuses('ok');},60000);
+  setInterval(function(){checkStatuses('waiting');},3*1000);
+  setInterval(function(){checkStatuses('failed');},60*1000);
+  setInterval(function(){checkStatuses('ok');},600*1000);
 
   $('.p-feature-list-delete').bind('click',function(){
     element = $(this).parents('tr');
@@ -125,6 +125,10 @@ $(function() {
 
   $('.show-feature-description').bind('click',function(){
     $(this).nextAll('.p-feature-description').toggle(); return false;
+  });
+
+  $('.p-feature-group-show').bind('click',function(){
+    $(this).parent().next('.p-feature-group-table').toggle(); return false;
   });
 
   $('.p-feature-description').hide();
