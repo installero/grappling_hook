@@ -118,7 +118,6 @@ class FeaturesWriteModule extends BaseWriteModule {
 		
 		if($old_group != $new_group){
 			// move to another folder
-			
 			copy($source, $dest);
 			unlink($source);
 			Features::getInstance()->dropCache($oldf->id);

@@ -78,14 +78,14 @@ class Feature extends BaseObjectClass {
 		$this->load();
 		// bundle exec cuke4php features/authorization/sign_in.feature -r features
 		
-		$command = 'cd '.Config::need('features_path').'../ &&  xvfb-run bundle exec cuke4php -f progress features/' . $this->getFilePath() . ' -r features';
+		$command = 'cd '.Config::need('features_path').'../ &&  bundle exec cuke4php -f progress features/' . $this->getFilePath() . ' -r features';
 		echo $command."\n";
 		$f = Config::need('features_path') . $this->getFilePath();
 		if (!file_exists($f)) {
 			$this->setStatus(self::STATUS_PAUSED, 'no file ' . $f);
 			return array(false, array('no file ' . $f));
 		}
-		$com = 'cd '.Config::need('features_path').'../ && echo "Running '.$f.' with Ruby $(ruby -v)" >> ruby_version.log';
+		$com = 'cd '.Config::need('features_path').'../ && echo " $command \n Running '.$f.' with Ruby $(ruby -v)" >> ruby_version.log';
 		exec($com);
 
 		$file_modify = filemtime($f);
