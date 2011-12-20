@@ -62,6 +62,7 @@
     <div class="p-feature-group" id="{@id}">
       <h2 class="p-feature-group-title">
         <em class="p-feature-group-show"><a href="#"><xsl:value-of select="@title"/></a></em>
+        (<xsl:value-of select="count(features/item)"/>)
         <em class="p-feature-group-add_feature"><a href="{&prefix;}features/new?group_id={@id}">+1</a></em>
         <xsl:if test="@path_edit">
           <em class="p-feature-group-edit"><a href="{@path_edit}">ред.</a></em>
