@@ -11,14 +11,16 @@
     </div>
     <xsl:apply-templates select="conditions/item[@mode='paging']" mode="p-misc-condition"/>
 	</xsl:template>
- 
+
   <xsl:template match="module[@name='features' and @action='list']" mode="p-module">
     <xsl:param name="title" select="features/@title"/>
     <xsl:param name="amount" select="features/@count"/>
     <h2><xsl:value-of select="$title" /> (<xsl:value-of select="$amount"/>)</h2>
-    <xsl:apply-templates select="groups" mode="p-feature-groups"/>
+    <xsl:apply-templates select="groups/item" mode="p-feature-group-list-item">
+      <xsl:sort select="@title" lang="ru" data-type="text" order="ascending" case-order="upper-first"/>
+    </xsl:apply-templates>
   </xsl:template>
-  
+
   <xsl:template match="module[@name='features' and @action='show']" mode="p-module">
     <xsl:apply-templates select="feature" mode="p-feature-show"/>
   </xsl:template>

@@ -40,7 +40,7 @@
           <div id="description"/>
 				</div>
 				<div class="form-field">
-					<label>Путь до файла (относительно папки features/)</label>
+					<label>Путь до файла (относительно features/)</label>
           <input name="filepath" value="{@filepath}"/>
 				</div>
 			</div>
@@ -57,10 +57,6 @@
       <xsl:value-of select="@title"/>
     </option>
   </xsl:template>
-
-	<xsl:template match="*" mode="p-feature-groups">
-    <xsl:apply-templates select="item" mode="p-feature-group-list-item"/>
-	</xsl:template>
 
 	<xsl:template match="*" mode="p-feature-group-list-item">
     <div class="p-feature-group" id="{@id}">
